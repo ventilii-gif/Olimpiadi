@@ -254,6 +254,33 @@ input[type="range"]{accent-color:var(--accent); width:100%}
       </div>
     </div>
 
+    <div class="card" id="teoria-legenda">
+      <h2>Legenda dei simboli</h2>
+      <p class="lead">Il significato dei simboli che compaiono nei richiami, negli esercizi e nei quiz. Se incontri una notazione che non ricordi, la trovi spiegata qui.</p>
+      <div class="grid2">
+        <div>
+          <h3>Notazioni generali</h3>
+          <ul class="pill-list">
+            <li>\(a \equiv b \pmod m\) — <strong>congruenza</strong>: \(a\) e \(b\) danno lo stesso resto quando li dividi per \(m\).</li>
+            <li>\(m \mid n\) significa «\(m\) <strong>divide</strong> \(n\)»; \(m \nmid n\) significa «non lo divide».</li>
+            <li>\(\lfloor x \rfloor\) — <strong>parte intera</strong> di \(x\) (arrotondamento per difetto); \(\lceil x \rceil\) arrotonda per eccesso.</li>
+            <li>\(n!\) — <strong>fattoriale</strong>: \(n! = 1\cdot 2\cdots n\) (con \(0!=1\)).</li>
+            <li>\(\binom{n}{k}\) — <strong>coefficiente binomiale</strong>: in quanti modi si scelgono \(k\) oggetti fra \(n\), \(\binom{n}{k}=\dfrac{n!}{k!\,(n-k)!}\).</li>
+            <li>\(\operatorname{MCD}\) e \(\operatorname{mcm}\) — <strong>massimo comun divisore</strong> e <strong>minimo comune multiplo</strong>. Due numeri sono <em>coprimi</em> se il loro \(\operatorname{MCD}\) vale \(1\).</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Funzioni e successioni ricorrenti</h3>
+          <ul class="pill-list">
+            <li>\(\varphi(m)\) — <strong>funzione di Eulero</strong> (o toziente): quanti interi da \(1\) a \(m\) sono coprimi con \(m\). Es.: \(\varphi(10)=4\), cioè \(1,3,7,9\).</li>
+            <li>\(\sigma(N)\) — <strong>somma dei divisori</strong> di \(N\), compresi \(1\) e \(N\). Es.: \(\sigma(6)=1+2+3+6=12\).</li>
+            <li><strong>Numeri di Fibonacci</strong> \(F_n\): \(1,1,2,3,5,8,13,\dots\), ognuno è la somma dei due precedenti.</li>
+            <li><strong>Numeri di Catalan</strong> \(C_n=\dfrac{1}{n+1}\binom{2n}{n}\): contano parentesi ben formate, triangolazioni, cammini che non scendono sotto la diagonale.</li>
+            <li><strong>Dismutazioni</strong> \(D_n\): permutazioni in cui nessun elemento resta al proprio posto (nessun punto fisso).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
     <div id="teoria-richiami"></div>
   </section>
 
@@ -703,11 +730,11 @@ input[type="range"]{accent-color:var(--accent); width:100%}
       }
       if (coprime) {
         info.innerHTML = "La successione \\(" + a + "^1, " + a + "^2, " + a + "^3, \\dots \\bmod " + m + "\\) è periodica e torna a \\(1\\). " +
-          "Poiché \\(\\gcd(" + a + "," + m + ")=1\\), l'<strong>ordine</strong> di \\(" + a + "\\) modulo \\(" + m + "\\) è \\(d=" + order + "\\) (cioè \\(" + a + "^{" + order + "}\\equiv 1\\)). " +
+          "Poiché \\(\\operatorname{MCD}(" + a + "," + m + ")=1\\), l'<strong>ordine</strong> di \\(" + a + "\\) modulo \\(" + m + "\\) è \\(d=" + order + "\\) (cioè \\(" + a + "^{" + order + "}\\equiv 1\\)). " +
           "Se \\(" + m + "\\) è primo, per Fermat \\(d\\) divide \\(" + (m - 1) + "\\).";
       } else {
         var clen = list.length - (cycleStart < 0 ? 0 : cycleStart);
-        info.innerHTML = "Poiché \\(\\gcd(" + a + "," + m + ")\\neq 1\\), la successione \\(" + a + "^k \\bmod " + m + "\\) non torna a \\(1\\): dopo un tratto iniziale entra in un ciclo di lunghezza \\(" + clen + "\\).";
+        info.innerHTML = "Poiché \\(\\operatorname{MCD}(" + a + "," + m + ")\\neq 1\\), la successione \\(" + a + "^k \\bmod " + m + "\\) non torna a \\(1\\): dopo un tratto iniziale entra in un ciclo di lunghezza \\(" + clen + "\\).";
       }
       typeset(info);
     }
@@ -1211,7 +1238,7 @@ GEN.esperto["Teoria dei numeri"] = [
     return { text: "Qual è il resto della divisione di \\(" + a + "^{" + n + "}\\) per \\(100\\) (cioè le sue ultime due cifre)?",
       answer: ans,
       hints: ["Le ultime due cifre delle potenze di " + a + " sono periodiche: cerca il periodo modulo 100.",
-        "Le potenze modulo 100 si ripetono con periodo che divide 20 (\\(\\lambda(100)=20\\)); riduci l'esponente."],
+        "Le potenze modulo 100 si ripetono con periodo che divide 20; riduci l'esponente."],
       solution: "Le ultime due cifre di \\(" + a + "^k\\) sono periodiche modulo 100 (periodo divisore di 20). Calcolando \\(" + a + "^{" + n + "}\\bmod 100\\) si ottiene \\(" + ans + "\\).",
       distractors: [modpow(a, n, 10), (ans + 1) % 100, (ans + 10) % 100, (ans + 50) % 100, (ans + 25) % 100] };
   } },
@@ -1288,7 +1315,7 @@ GEN.esperto["Geometria"] = [
     return { text: "Nel piano cartesiano un triangolo ha vertici \\(A" + pt(A0) + "\\), \\(B" + pt(B0) + "\\) e \\(C" + pt(C0) + "\\). Quanti punti a coordinate intere cadono strettamente all'interno del triangolo?",
       answer: I,
       hints: ["Usa il teorema di Pick: \\(A = I + \\dfrac{B}{2} - 1\\), con \\(I\\) punti interni e \\(B\\) di bordo.",
-        "Calcola l'area \\(A\\) (formula di Gauss) e i punti di bordo \\(B\\) (somma dei \\(\\gcd\\) sui lati), poi ricava \\(I = A - \\dfrac{B}{2} + 1\\)."],
+        "Calcola l'area \\(A\\) (formula di Gauss) e i punti di bordo \\(B\\) (somma dei \\(\\operatorname{MCD}\\) sui lati), poi ricava \\(I = A - \\dfrac{B}{2} + 1\\)."],
       solution: "Area \\(A = " + (area2 / 2) + "\\), punti di bordo \\(B = " + B + "\\). Per Pick \\(I = A - \\dfrac{B}{2} + 1 = " + (area2 / 2) + " - " + (B / 2) + " + 1 = " + I + "\\).",
       distractors: [I + B, B, I + 1, I - 1, area2 / 2] };
   } },
@@ -1353,7 +1380,7 @@ GEN.superesperto["Teoria dei numeri"] = [
     return { text: "Qual è il più piccolo intero positivo \\(n\\) tale che \\(" + a + "^{n} \\equiv 1 \\pmod{" + m + "}\\)?",
       answer: d,
       hints: ["Calcola le potenze \\(" + a + "^1, " + a + "^2, \\dots \\pmod{" + m + "}\\) finché torni a 1.",
-        "Questo \\(n\\) (l'ordine di " + a + " modulo " + m + ") divide \\(\\varphi(" + m + ")\\)."],
+        "Questo \\(n\\) (l'ordine di " + a + " modulo " + m + ") divide \\(\\varphi(" + m + ")\\), la funzione di Eulero (interi da 1 a " + m + " coprimi con " + m + ")."],
       solution: "Elevando " + a + " modulo " + m + " si torna a 1 per la prima volta all'esponente \\(" + d + "\\): l'ordine di " + a + " è \\(" + d + "\\).",
       distractors: [m - 1, d + 1, d - 1, m, d * 2] };
   } },
@@ -1369,7 +1396,7 @@ GEN.superesperto["Teoria dei numeri"] = [
     var f = choice(forms);
     return { text: "Quanti interi da 1 a " + f.N + " sono coprimi con " + f.N + " (cioè hanno massimo comun divisore 1 con " + f.N + ")?",
       answer: f.phi,
-      hints: ["È la funzione di Eulero \\(\\varphi(" + f.N + ")\\).",
+      hints: ["È la funzione di Eulero \\(\\varphi(" + f.N + ")\\): conta gli interi da 1 a " + f.N + " coprimi con " + f.N + ".",
         "Fattorizza " + f.N + " e usa " + f.why + "."],
       solution: "\\(\\varphi(" + f.N + ") = " + f.phi + "\\), usando " + f.why + ".",
       distractors: [f.N - 1, Math.round(f.N / 2), f.phi + 1, f.phi - 1, f.N] };
@@ -1378,7 +1405,7 @@ GEN.superesperto["Teoria dei numeri"] = [
     var a = choice([2, 3, 7, 11, 13, 17]), n = randInt(50, 400), ans = modpow(a, n, 1000);
     return { text: "Qual è il resto della divisione di \\(" + a + "^{" + n + "}\\) per \\(1000\\) (cioè le sue ultime tre cifre)?",
       answer: ans,
-      hints: ["Le potenze modulo 1000 sono periodiche: il periodo divide \\(\\lambda(1000)=100\\).",
+      hints: ["Le potenze modulo 1000 sono periodiche: il periodo divide 100.",
         "Riduci l'esponente modulo il periodo e calcola \\(" + a + "^{\\,\\cdot}\\bmod 1000\\)."],
       solution: "Sfruttando la periodicità modulo 1000 si ottiene \\(" + a + "^{" + n + "} \\equiv " + ans + " \\pmod{1000}\\).",
       distractors: [modpow(a, n, 100), (ans + 1) % 1000, (ans + 100) % 1000, (ans + 500) % 1000, (ans + 10) % 1000] };
@@ -1624,7 +1651,7 @@ if (typeof module !== "undefined" && module.exports) {
       { area: "Teoria dei numeri", html:
         "<p><strong>Piccolo teorema di Fermat.</strong> Se \\(p\\) è primo e \\(p\\nmid a\\), allora \\(a^{p-1}\\equiv 1 \\pmod p\\).</p>" +
         "<p><strong>Ordine.</strong> Il più piccolo \\(d>0\\) con \\(a^d\\equiv 1\\) divide \\(p-1\\): riduci l'esponente modulo \\(d\\) (o modulo \\(p-1\\)).</p>" +
-        "<p><strong>Somma dei divisori</strong> (moltiplicativa): \\(\\sigma(p^a)=\\dfrac{p^{a+1}-1}{p-1}\\). <strong>Teorema cinese del resto</strong> per sistemi di congruenze.</p>" },
+        "<p><strong>Somma dei divisori.</strong> \\(\\sigma(N)\\) è la somma di tutti i divisori di \\(N\\) (compresi \\(1\\) e \\(N\\)); è moltiplicativa e \\(\\sigma(p^a)=\\dfrac{p^{a+1}-1}{p-1}\\). <strong>Teorema cinese del resto</strong> per sistemi di congruenze.</p>" },
       { area: "Combinatoria e probabilità", html:
         "<p><strong>Dismutazioni</strong> (permutazioni senza punti fissi): \\(D_n=(n-1)(D_{n-1}+D_{n-2})\\), con \\(D_1=0,\\ D_2=1\\).</p>" +
         "<p><strong>Inclusione-esclusione</strong> per contare unioni di insiemi con sovrapposizioni.</p>" +
@@ -1640,9 +1667,9 @@ if (typeof module !== "undefined" && module.exports) {
     ],
     superesperto: [
       { area: "Teoria dei numeri", html:
-        "<p><strong>Teorema di Eulero.</strong> Se \\(\\gcd(a,m)=1\\), \\(a^{\\varphi(m)}\\equiv 1 \\pmod m\\); \\(\\varphi\\) è la funzione di Eulero.</p>" +
+        "<p><strong>Teorema di Eulero.</strong> Se \\(\\operatorname{MCD}(a,m)=1\\), \\(a^{\\varphi(m)}\\equiv 1 \\pmod m\\); la <strong>funzione di Eulero</strong> \\(\\varphi(m)\\) conta gli interi da \\(1\\) a \\(m\\) coprimi con \\(m\\).</p>" +
         "<p><strong>Teorema di Wilson.</strong> Se \\(p\\) è primo, \\((p-1)!\\equiv -1 \\pmod p\\).</p>" +
-        "<p><strong>Ultime tre cifre.</strong> Sono il resto modulo 1000: la periodicità delle potenze ha periodo divisore di \\(\\lambda(1000)=100\\).</p>" },
+        "<p><strong>Ultime tre cifre.</strong> Sono il resto modulo 1000: per le basi coprime con 1000 la periodicità delle potenze ha periodo divisore di 100.</p>" },
       { area: "Combinatoria e probabilità", html:
         "<p><strong>Numeri di Catalan.</strong> \\(C_n=\\dfrac{1}{n+1}\\dbinom{2n}{n}\\): contano accoppiamenti non intersecanti, parentesi ben formate, triangolazioni.</p>" +
         "<p><strong>Fibonacci.</strong> I sottoinsiemi di \\(\\{1,\\dots,n\\}\\) senza due elementi consecutivi sono \\(F_{n+2}\\).</p>" +
