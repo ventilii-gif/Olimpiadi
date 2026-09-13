@@ -217,6 +217,10 @@ input[type="range"]{accent-color:var(--accent); width:100%}
 
   <!-- ================= TEORIA ================= -->
   <section class="panel active" id="p-teoria" role="tabpanel" aria-labelledby="tab-teoria" tabindex="0">
+    <div class="card" id="teoria-intro">
+      <p class="lead" style="margin:0 0 .7rem">La teoria si adatta al livello scelto: i richiami e i teoremi diventano via via più avanzati.</p>
+      <div class="levelbar" id="teoria-levelbar"></div>
+    </div>
     <div class="card">
       <h2>Come funzionano le gare</h2>
       <p class="lead">Le Olimpiadi di Matematica propongono quesiti in cui contano intuito e metodo più del calcolo lungo. Ecco i punti che contano di più per la strategia.</p>
@@ -250,52 +254,22 @@ input[type="range"]{accent-color:var(--accent); width:100%}
       </div>
     </div>
 
-    <div class="card">
-      <span class="area-tag">Teoria dei numeri</span>
-      <h2>Richiami — Teoria dei numeri</h2>
-      <p>Fattorizzazione unica: ogni intero \(>1\) si scrive in modo unico come prodotto di primi. Se \(n=p_1^{a_1}\cdots p_k^{a_k}\), il numero di divisori è \((a_1+1)\cdots(a_k+1)\).</p>
-      <p>Legame utile: \(\operatorname{MCD}(a,b)\cdot\operatorname{mcm}(a,b)=a\cdot b\).</p>
-      <p><strong>Congruenze.</strong> \(a\equiv b \pmod m\) significa che \(m\mid(a-b)\). Le ultime cifre di \(a^n\) seguono cicli modulo 10 (per esempio le potenze di 7 danno \(7,9,3,1,7,9,3,1,\dots\)).</p>
-      <p><strong>Divisibilità rapide.</strong> Per 3 e per 9 conta la somma delle cifre; per 11 la somma a segni alterni. Gli zeri finali di \(n!\) contano i fattori 5: \(\lfloor n/5\rfloor+\lfloor n/25\rfloor+\cdots\)</p>
-    </div>
-
-    <div class="card">
-      <span class="area-tag">Combinatoria e probabilità</span>
-      <h2>Richiami — Combinatoria e probabilità</h2>
-      <p><strong>Regola del prodotto:</strong> scelte indipendenti si moltiplicano. <strong>Regola della somma:</strong> alternative disgiunte si sommano.</p>
-      <p>Disposizioni ordinate di \(k\) tra \(n\): \(n(n-1)\cdots(n-k+1)\). Combinazioni (senza ordine): \(\displaystyle\binom{n}{k}=\frac{n!}{k!\,(n-k)!}\).</p>
-      <p><strong>Principio dei cassetti (pigeonhole).</strong> Se distribuisci \(n\) oggetti in \(k\) contenitori, almeno uno ne contiene \(\left\lceil \dfrac{n}{k}\right\rceil\).</p>
-      <p><strong>Complementare.</strong> Spesso è più facile contare i casi che <em>non</em> vogliamo: \(P(A)=1-P(\text{non }A)\).</p>
-    </div>
-
-    <div class="card">
-      <span class="area-tag">Geometria</span>
-      <h2>Richiami — Geometria</h2>
-      <p>Somma degli angoli interni di un poligono di \(n\) lati: \((n-2)\cdot 180^\circ\); per un poligono regolare ogni angolo interno vale \(\dfrac{(n-2)\cdot180^\circ}{n}\).</p>
-      <p>Area del triangolo: \(A=\tfrac12\,b\,h\); con i soli lati usa Erone: \(A=\sqrt{s(s-a)(s-b)(s-c)}\), con \(s=\tfrac{a+b+c}{2}\).</p>
-      <p><strong>Similitudine.</strong> Se il rapporto di similitudine è \(k\), le aree stanno come \(k^2\) e i volumi come \(k^3\).</p>
-      <p><strong>Punti reticolari.</strong> Teorema di Pick: un poligono con vertici a coordinate intere ha area \(A=I+\dfrac{B}{2}-1\), dove \(I\) e \(B\) sono i punti interni e di bordo.</p>
-    </div>
-
-    <div class="card">
-      <span class="area-tag">Algebra e logica</span>
-      <h2>Richiami — Algebra e logica</h2>
-      <p><strong>Prodotti notevoli.</strong> \((a+b)^2=a^2+2ab+b^2\), quindi \(a^2+b^2=(a+b)^2-2ab\). Inoltre \(a^2-b^2=(a-b)(a+b)\).</p>
-      <p><strong>Somma di Gauss.</strong> \(1+2+\cdots+n=\dfrac{n(n+1)}{2}\); la somma dei primi \(n\) dispari vale \(n^2\).</p>
-      <p><strong>Invarianti e parità.</strong> Se una mossa cambia sempre una quantità di un valore pari, la sua parità non cambia mai: è lo strumento per dimostrare che qualcosa è impossibile.</p>
-    </div>
+    <div id="teoria-richiami"></div>
   </section>
 
   <!-- ================= SIMULAZIONE ================= -->
   <section class="panel" id="p-sim" role="tabpanel" aria-labelledby="tab-sim" tabindex="0">
     <div class="card">
       <h2>Simulazione</h2>
-      <p class="lead">Quattro esploratori interattivi, uno per area. Muovi i cursori: la figura e i valori si aggiornano subito.</p>
+      <p class="lead">Esploratori interattivi: muovi i cursori e i valori si aggiornano subito. Ai livelli più alti si sbloccano nuovi esploratori e intervalli più ampi.</p>
+      <div class="levelbar" id="sim-levelbar" style="margin:0 0 1rem"></div>
       <div class="sim-modes" role="tablist" aria-label="Scegli la simulazione">
         <button class="tab" data-mode="cifre" aria-selected="true">Ultime cifre di \(a^n\)</button>
         <button class="tab" data-mode="cassetti" aria-selected="false">Principio dei cassetti</button>
         <button class="tab" data-mode="triangolari" aria-selected="false">Somma di Gauss</button>
         <button class="tab" data-mode="pick" aria-selected="false">Area e teorema di Pick</button>
+        <button class="tab" data-mode="orologio" data-minlevel="2" aria-selected="false" hidden>Orologio modulare</button>
+        <button class="tab" data-mode="catalan" data-minlevel="3" aria-selected="false" hidden>Corde di Catalan</button>
       </div>
 
       <div class="sim-ctrl active" id="ctrl-cifre">
@@ -314,6 +288,13 @@ input[type="range"]{accent-color:var(--accent); width:100%}
         <div class="ctrl"><label>B: y <span class="val" id="v-y1">1</span></label><input type="range" id="s-y1" min="-6" max="6" value="1"></div>
         <div class="ctrl"><label>C: x <span class="val" id="v-x2">1</span></label><input type="range" id="s-x2" min="-6" max="6" value="1"></div>
         <div class="ctrl"><label>C: y <span class="val" id="v-y2">3</span></label><input type="range" id="s-y2" min="-6" max="6" value="3"></div>
+      </div>
+      <div class="sim-ctrl" id="ctrl-orologio">
+        <div class="ctrl"><label>Base a <span class="val" id="v-oa">3</span></label><input type="range" id="s-oa" min="2" max="12" value="3"></div>
+        <div class="ctrl"><label>Modulo m <span class="val" id="v-om">7</span></label><input type="range" id="s-om" min="3" max="16" value="7"></div>
+      </div>
+      <div class="sim-ctrl" id="ctrl-catalan">
+        <div class="ctrl"><label>n (coppie) <span class="val" id="v-cat">4</span></label><input type="range" id="s-cat" min="1" max="6" value="4"></div>
       </div>
 
       <div class="sim-wrap"><canvas id="simcanvas" role="img" aria-label="Visualizzazione interattiva"></canvas></div>
@@ -453,11 +434,13 @@ input[type="range"]{accent-color:var(--accent); width:100%}
     var canvas = document.getElementById("simcanvas");
     var ctx = canvas.getContext("2d");
     var info = document.getElementById("siminfo");
-    var state = { mode: "cifre", a: 7, n: 12, cn: 10, ck: 3, tn: 8, x1: 4, y1: 1, x2: 1, y2: 3 };
+    var state = { mode: "cifre", a: 7, n: 12, cn: 10, ck: 3, tn: 8, x1: 4, y1: 1, x2: 1, y2: 3, oa: 3, om: 7, catN: 4, pickRng: 7, lvl: "base" };
     var api = { visible: false };
+    var LIDX = { base: 0, avanzato: 1, esperto: 2, superesperto: 3 };
 
     function cvar(name) { return getComputedStyle(root).getPropertyValue(name).trim(); }
     function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { var t = b; b = a % b; a = t; } return a; }
+    function nCr(n, k) { if (k < 0 || k > n) return 0; k = Math.min(k, n - k); var r = 1; for (var i = 0; i < k; i++) r = r * (n - i) / (i + 1); return Math.round(r); }
 
     function resize() {
       var dpr = window.devicePixelRatio || 1;
@@ -484,7 +467,6 @@ input[type="range"]{accent-color:var(--accent); width:100%}
       var cyc = cycleOfLastDigits(state.a);
       var per = cyc.length;
       var last = cyc[(state.n - 1) % per];
-      // sequenza in alto
       var count = 14;
       var pad = 16, gap = 6;
       var bw = (w - 2 * pad - (count - 1) * gap) / count;
@@ -505,12 +487,10 @@ input[type="range"]{accent-color:var(--accent); width:100%}
         ctx.fillText("a^" + (i + 1), x + bw / 2, by + bh + 10);
         ctx.font = "600 " + Math.max(12, Math.min(18, bw * 0.6)) + "px 'JetBrains Mono', monospace";
       }
-      // etichetta blocco che si ripete
       ctx.fillStyle = cvar("--sim-fill");
       ctx.textAlign = "left"; ctx.font = "600 12px 'JetBrains Mono', monospace";
       ctx.fillText("blocco che si ripete (periodo " + per + ")", pad, by - 12);
 
-      // anello del ciclo in basso
       var cx = w / 2, cy = by + bh + 40 + (h - (by + bh + 40)) / 2;
       var R = Math.min(w, h - (by + bh + 60)) * 0.34;
       R = Math.max(40, R);
@@ -548,12 +528,11 @@ input[type="range"]{accent-color:var(--accent); width:100%}
       var gap = 10;
       var bw = (w - 2 * pad - (k - 1) * gap) / k;
       var ballR = Math.min(bw * 0.34, (areaH / maxCount) * 0.42, 16);
-      ballR = Math.max(4, ballR);
+      ballR = Math.max(3, ballR);
       var slot = areaH / maxCount;
       for (var b = 0; b < k; b++) {
         var x = pad + b * (bw + gap);
         var isMax = counts[b] === fullest && fullest > 0;
-        // contenitore
         ctx.strokeStyle = isMax ? cvar("--sim-mark") : cvar("--sim-axis");
         ctx.lineWidth = isMax ? 3 : 1.5;
         ctx.beginPath();
@@ -562,7 +541,6 @@ input[type="range"]{accent-color:var(--accent); width:100%}
         ctx.lineTo(x + bw, top + areaH);
         ctx.lineTo(x + bw, top);
         ctx.stroke();
-        // palline
         for (var c = 0; c < counts[b]; c++) {
           var by = top + areaH - slot * (c + 0.5);
           ctx.beginPath(); ctx.arc(x + bw / 2, by, ballR, 0, Math.PI * 2);
@@ -571,7 +549,7 @@ input[type="range"]{accent-color:var(--accent); width:100%}
         }
         ctx.fillStyle = cvar("--muted"); ctx.textAlign = "center"; ctx.textBaseline = "top";
         ctx.font = "600 12px 'JetBrains Mono', monospace";
-        ctx.fillText(counts[b] + (counts[b] === 1 ? " ogg." : " ogg."), x + bw / 2, top + areaH + 6);
+        ctx.fillText(counts[b] + " ogg.", x + bw / 2, top + areaH + 6);
       }
       info.innerHTML = "Con \\(" + n + "\\) oggetti in \\(" + k + "\\) cassetti, la distribuzione più equa mette " +
         "\\(\\left\\lceil " + n + "/" + k + "\\right\\rceil = " + fullest + "\\) oggetti nel cassetto più pieno. " +
@@ -587,14 +565,13 @@ input[type="range"]{accent-color:var(--accent); width:100%}
       var pad = 30, top = 26;
       var cols = n + 1, rows = n;
       var cell = Math.min((w - 2 * pad) / cols, (h - top - 20) / rows);
-      var dotR = Math.max(3, Math.min(cell * 0.3, 12));
+      var dotR = Math.max(2, Math.min(cell * 0.3, 12));
       var gx = (w - cols * cell) / 2 + cell / 2;
       var gy = top + cell / 2;
-      // triangolo pieno (riga i ha i pallini) + complementare per formare il rettangolo n x (n+1)
       for (var row = 0; row < rows; row++) {
         for (var col = 0; col < cols; col++) {
           var cx = gx + col * cell, cy = gy + row * cell;
-          var inTriangle = col <= row;            // pallini della somma 1+2+...+n
+          var inTriangle = col <= row;
           ctx.beginPath(); ctx.arc(cx, cy, dotR, 0, Math.PI * 2);
           if (inTriangle) { ctx.fillStyle = cvar("--sim-fill"); ctx.fill(); }
           else { ctx.fillStyle = cvar("--sim-faint"); ctx.fill(); }
@@ -622,12 +599,11 @@ input[type="range"]{accent-color:var(--accent); width:100%}
     }
     function drawPick() {
       var w = W(), h = H();
-      var Rng = 7;
+      var Rng = state.pickRng;
       var unit = Math.min(w, h) / (2 * Rng + 2);
       var ox = w / 2, oy = h / 2;
       function sx(X) { return ox + X * unit; }
       function sy(Y) { return oy - Y * unit; }
-      // griglia
       ctx.lineWidth = 1; ctx.strokeStyle = cvar("--sim-grid");
       for (var g = -Rng; g <= Rng; g++) {
         ctx.beginPath(); ctx.moveTo(sx(g), sy(-Rng)); ctx.lineTo(sx(g), sy(Rng)); ctx.stroke();
@@ -638,16 +614,14 @@ input[type="range"]{accent-color:var(--accent); width:100%}
       ctx.beginPath(); ctx.moveTo(sx(0), sy(-Rng)); ctx.lineTo(sx(0), sy(Rng)); ctx.stroke();
 
       var Ax = 0, Ay = 0, Bx = state.x1, By = state.y1, Cx = state.x2, Cy = state.y2;
-      var area2 = Math.abs(Bx * Cy - Cx * By); // area con vertice A nell'origine
+      var area2 = Math.abs(Bx * Cy - Cx * By);
       var A = area2 / 2;
 
-      // triangolo
       ctx.beginPath();
       ctx.moveTo(sx(Ax), sy(Ay)); ctx.lineTo(sx(Bx), sy(By)); ctx.lineTo(sx(Cx), sy(Cy)); ctx.closePath();
       ctx.fillStyle = hexA(cvar("--sim-fill"), 0.16); ctx.fill();
       ctx.strokeStyle = cvar("--sim-fill"); ctx.lineWidth = 2.4; ctx.stroke();
 
-      // conteggio punti reticolari
       var B = gcd(Bx - Ax, By - Ay) + gcd(Cx - Bx, Cy - By) + gcd(Ax - Cx, Ay - Cy);
       var I = 0;
       if (area2 !== 0) {
@@ -670,7 +644,6 @@ input[type="range"]{accent-color:var(--accent); width:100%}
             ctx.fillStyle = cvar("--sim-faint"); ctx.fill();
           }
       }
-      // vertici
       [["A", Ax, Ay], ["B", Bx, By], ["C", Cx, Cy]].forEach(function (v) {
         ctx.beginPath(); ctx.arc(sx(v[1]), sy(v[2]), 5.5, 0, Math.PI * 2);
         ctx.fillStyle = cvar("--heading"); ctx.fill();
@@ -689,6 +662,77 @@ input[type="range"]{accent-color:var(--accent); width:100%}
       }
       typeset(info);
     }
+
+    /* ----- mode: orologio modulare / ordine (esperto+) ----- */
+    function drawArrow(x1, y1, x2, y2) {
+      if (Math.abs(x1 - x2) < 0.5 && Math.abs(y1 - y2) < 0.5) return;
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+      var ang = Math.atan2(y2 - y1, x2 - x1), hl = 7;
+      ctx.beginPath();
+      ctx.moveTo(x2, y2); ctx.lineTo(x2 - hl * Math.cos(ang - 0.4), y2 - hl * Math.sin(ang - 0.4));
+      ctx.moveTo(x2, y2); ctx.lineTo(x2 - hl * Math.cos(ang + 0.4), y2 - hl * Math.sin(ang + 0.4));
+      ctx.stroke();
+    }
+    function drawOrologio() {
+      var w = W(), h = H(), a = state.oa, m = state.om;
+      var list = [], seen = {}, pos = ((a % m) + m) % m, guard = 0, cycleStart = -1;
+      while (guard <= 2 * m + 4) {
+        if (seen[pos] !== undefined) { cycleStart = seen[pos]; break; }
+        seen[pos] = list.length; list.push(pos); pos = (pos * a) % m; guard++;
+      }
+      var coprime = gcd(a, m) === 1;
+      var order = -1;
+      for (var t = 0; t < list.length; t++) { if (list[t] === 1) { order = t + 1; break; } }
+      var cx = w / 2, cy = h / 2 + 4, R = Math.min(w, h) * 0.36;
+      function ptx(j) { return cx + R * Math.cos(-Math.PI / 2 + j * 2 * Math.PI / m); }
+      function pty(j) { return cy + R * Math.sin(-Math.PI / 2 + j * 2 * Math.PI / m); }
+      ctx.strokeStyle = cvar("--sim-grid"); ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.stroke();
+      ctx.strokeStyle = cvar("--sim-fill"); ctx.lineWidth = 2;
+      for (var s = 0; s < list.length - 1; s++) drawArrow(ptx(list[s]), pty(list[s]), ptx(list[s + 1]), pty(list[s + 1]));
+      if (cycleStart >= 0 && list.length > 0) drawArrow(ptx(list[list.length - 1]), pty(list[list.length - 1]), ptx(list[cycleStart]), pty(list[cycleStart]));
+      var rNode = Math.max(7, Math.min(13, R * 0.9 / m + 6));
+      for (var j = 0; j < m; j++) {
+        var visited = seen[j] !== undefined, isOne = j === 1;
+        ctx.beginPath(); ctx.arc(ptx(j), pty(j), isOne ? rNode + 2 : rNode, 0, Math.PI * 2);
+        ctx.fillStyle = isOne ? cvar("--sim-mark") : (visited ? cvar("--sim-fill") : cvar("--sim-faint"));
+        ctx.fill();
+        ctx.fillStyle = (isOne || visited) ? "#fff" : cvar("--muted");
+        ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.font = "600 10px 'JetBrains Mono', monospace";
+        ctx.fillText(String(j), ptx(j), pty(j));
+      }
+      if (coprime) {
+        info.innerHTML = "La successione \\(" + a + "^1, " + a + "^2, " + a + "^3, \\dots \\bmod " + m + "\\) è periodica e torna a \\(1\\). " +
+          "Poiché \\(\\gcd(" + a + "," + m + ")=1\\), l'<strong>ordine</strong> di \\(" + a + "\\) modulo \\(" + m + "\\) è \\(d=" + order + "\\) (cioè \\(" + a + "^{" + order + "}\\equiv 1\\)). " +
+          "Se \\(" + m + "\\) è primo, per Fermat \\(d\\) divide \\(" + (m - 1) + "\\).";
+      } else {
+        var clen = list.length - (cycleStart < 0 ? 0 : cycleStart);
+        info.innerHTML = "Poiché \\(\\gcd(" + a + "," + m + ")\\neq 1\\), la successione \\(" + a + "^k \\bmod " + m + "\\) non torna a \\(1\\): dopo un tratto iniziale entra in un ciclo di lunghezza \\(" + clen + "\\).";
+      }
+      typeset(info);
+    }
+
+    /* ----- mode: corde di Catalan (super) ----- */
+    function drawCatalan() {
+      var w = W(), h = H(), n = state.catN, P = 2 * n;
+      var cn = nCr(2 * n, n) / (n + 1);
+      var cx = w / 2, cy = h / 2 + 4, R = Math.min(w, h) * 0.36;
+      function ptx(j) { return cx + R * Math.cos(-Math.PI / 2 + j * 2 * Math.PI / P); }
+      function pty(j) { return cy + R * Math.sin(-Math.PI / 2 + j * 2 * Math.PI / P); }
+      ctx.strokeStyle = cvar("--sim-grid"); ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.stroke();
+      ctx.strokeStyle = cvar("--sim-fill"); ctx.lineWidth = 2.4;
+      for (var i = 0; i < n; i++) { var jj = P - 1 - i; ctx.beginPath(); ctx.moveTo(ptx(i), pty(i)); ctx.lineTo(ptx(jj), pty(jj)); ctx.stroke(); }
+      for (var j = 0; j < P; j++) {
+        ctx.beginPath(); ctx.arc(ptx(j), pty(j), 9, 0, Math.PI * 2); ctx.fillStyle = cvar("--sim-mark"); ctx.fill();
+        ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.font = "600 10px 'JetBrains Mono', monospace";
+        ctx.fillText(String(j + 1), ptx(j), pty(j));
+      }
+      info.innerHTML = "Con \\(" + P + "\\) punti su una circonferenza, il numero di modi di tracciare \\(" + n + "\\) corde a due a due senza incroci è il numero di Catalan " +
+        "\\(C_{" + n + "} = \\dfrac{1}{" + (n + 1) + "}\\dbinom{" + P + "}{" + n + "} = " + cn + "\\). In figura, uno degli accoppiamenti validi (corde annidate).";
+      typeset(info);
+    }
+
     function fmt(x) { return (Math.round(x * 100) / 100).toString(); }
     function hexA(hex, a) {
       hex = hex.replace("#", "");
@@ -713,12 +757,14 @@ input[type="range"]{accent-color:var(--accent); width:100%}
       else if (state.mode === "cassetti") drawCassetti();
       else if (state.mode === "triangolari") drawTriangolari();
       else if (state.mode === "pick") drawPick();
+      else if (state.mode === "orologio") drawOrologio();
+      else if (state.mode === "catalan") drawCatalan();
     }
     api.draw = draw;
 
-    // controlli
     function bindSlider(id, key, out) {
       var el = document.getElementById(id);
+      if (!el) return;
       el.addEventListener("input", function () {
         state[key] = parseInt(el.value, 10);
         if (out) document.getElementById(out).textContent = el.value;
@@ -730,18 +776,51 @@ input[type="range"]{accent-color:var(--accent); width:100%}
     bindSlider("s-tn", "tn", "v-tn");
     bindSlider("s-x1", "x1", "v-x1"); bindSlider("s-y1", "y1", "v-y1");
     bindSlider("s-x2", "x2", "v-x2"); bindSlider("s-y2", "y2", "v-y2");
+    bindSlider("s-oa", "oa", "v-oa"); bindSlider("s-om", "om", "v-om");
+    bindSlider("s-cat", "catN", "v-cat");
 
+    function selectMode(mode) {
+      state.mode = mode;
+      document.querySelectorAll(".sim-modes .tab").forEach(function (b) { b.setAttribute("aria-selected", b.getAttribute("data-mode") === mode ? "true" : "false"); });
+      document.querySelectorAll(".sim-ctrl").forEach(function (c) { c.classList.remove("active"); });
+      var cd = document.getElementById("ctrl-" + mode); if (cd) cd.classList.add("active");
+      draw();
+    }
     document.querySelectorAll(".sim-modes .tab").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        state.mode = btn.getAttribute("data-mode");
-        document.querySelectorAll(".sim-modes .tab").forEach(function (b) {
-          b.setAttribute("aria-selected", b === btn ? "true" : "false");
-        });
-        document.querySelectorAll(".sim-ctrl").forEach(function (c) { c.classList.remove("active"); });
-        document.getElementById("ctrl-" + state.mode).classList.add("active");
-        draw();
-      });
+      btn.addEventListener("click", function () { selectMode(btn.getAttribute("data-mode")); });
     });
+
+    function setRange(id, mn, mx, key, out) {
+      var el = document.getElementById(id); if (!el) return;
+      el.min = mn; el.max = mx;
+      var v = state[key]; if (v < mn) v = mn; if (v > mx) v = mx; state[key] = v; el.value = v;
+      if (out) document.getElementById(out).textContent = v;
+    }
+    function applyLevel(lv) {
+      state.lvl = lv;
+      var idx = LIDX[lv] || 0;
+      document.querySelectorAll(".sim-modes .tab").forEach(function (b) {
+        var ml = parseInt(b.getAttribute("data-minlevel") || "0", 10);
+        b.hidden = idx < ml;
+      });
+      var nMax = [100, 300, 600, 999][idx];
+      var cnMax = [40, 40, 50, 60][idx];
+      var tnMax = [16, 20, 24, 24][idx];
+      var pr = [7, 7, 8, 9][idx];
+      state.pickRng = pr;
+      setRange("s-n", 1, nMax, "n", "v-n");
+      setRange("s-cn", 1, cnMax, "cn", "v-cn");
+      setRange("s-tn", 1, tnMax, "tn", "v-tn");
+      var pc = pr - 1;
+      setRange("s-x1", -pc, pc, "x1", "v-x1");
+      setRange("s-y1", -pc, pc, "y1", "v-y1");
+      setRange("s-x2", -pc, pc, "x2", "v-x2");
+      setRange("s-y2", -pc, pc, "y2", "v-y2");
+      var cur = document.querySelector('.sim-modes .tab[data-mode="' + state.mode + '"]');
+      if (cur && cur.hidden) { selectMode("cifre"); return; }
+      draw();
+    }
+    api.applyLevel = applyLevel;
 
     var ro = window.ResizeObserver ? new ResizeObserver(function () { if (api.visible) resize(); }) : null;
     if (ro) ro.observe(canvas);
@@ -1503,6 +1582,94 @@ if (typeof module !== "undefined" && module.exports) {
 
   var ICON_REFRESH = '<svg class="ic" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v4h4"/></svg>';
 
+  /* ---------- Teoria per livello ---------- */
+  var TEORIA = {
+    base: [
+      { area: "Teoria dei numeri", html:
+        "<p>Fattorizzazione unica: ogni intero \\(>1\\) è prodotto di primi. Se \\(N=p_1^{a_1}\\cdots p_k^{a_k}\\), il numero di divisori è \\((a_1+1)\\cdots(a_k+1)\\).</p>" +
+        "<p>Legame utile: \\(\\operatorname{MCD}(a,b)\\cdot\\operatorname{mcm}(a,b)=a\\cdot b\\).</p>" +
+        "<p><strong>Ultime cifre.</strong> Le potenze \\(a^n\\) hanno ultima cifra periodica (mod 10): per esempio \\(7,9,3,1,7,9,3,1,\\dots\\)</p>" +
+        "<p><strong>Divisibilità rapide.</strong> Per 3 e 9 conta la somma delle cifre; per 11 la somma a segni alterni.</p>" },
+      { area: "Combinatoria e probabilità", html:
+        "<p><strong>Regola del prodotto</strong> (scelte indipendenti si moltiplicano) e <strong>della somma</strong> (alternative disgiunte si sommano).</p>" +
+        "<p>Disposizioni di \\(k\\) tra \\(n\\): \\(n(n-1)\\cdots(n-k+1)\\). Combinazioni: \\(\\binom{n}{k}=\\dfrac{n!}{k!\\,(n-k)!}\\).</p>" +
+        "<p><strong>Principio dei cassetti.</strong> Con \\(n\\) oggetti in \\(k\\) contenitori, uno ne contiene almeno \\(\\left\\lceil n/k\\right\\rceil\\).</p>" },
+      { area: "Geometria", html:
+        "<p>Somma degli angoli interni di un poligono di \\(n\\) lati: \\((n-2)\\cdot 180^\\circ\\).</p>" +
+        "<p>Area del triangolo: \\(A=\\tfrac12 b\\,h\\); con i lati, Erone: \\(A=\\sqrt{s(s-a)(s-b)(s-c)}\\), \\(s=\\tfrac{a+b+c}{2}\\).</p>" +
+        "<p><strong>Similitudine.</strong> Con rapporto \\(k\\), le aree stanno come \\(k^2\\). Cerchio: \\(A=\\pi r^2\\).</p>" },
+      { area: "Algebra e logica", html:
+        "<p><strong>Prodotti notevoli.</strong> \\((a+b)^2=a^2+2ab+b^2\\), quindi \\(a^2+b^2=(a+b)^2-2ab\\); inoltre \\(a^2-b^2=(a-b)(a+b)\\).</p>" +
+        "<p><strong>Somma di Gauss.</strong> \\(1+2+\\cdots+n=\\dfrac{n(n+1)}{2}\\); la somma dei primi \\(n\\) dispari vale \\(n^2\\).</p>" +
+        "<p><strong>Parità e invarianti.</strong> Una quantità che cambia sempre di un valore pari mantiene la sua parità: utile per le impossibilità.</p>" }
+    ],
+    avanzato: [
+      { area: "Teoria dei numeri", html:
+        "<p><strong>Congruenze.</strong> \\(a\\equiv b \\pmod m\\) significa \\(m\\mid(a-b)\\). Il resto di \\(a^n\\) si trova sfruttando la periodicità delle potenze.</p>" +
+        "<p><strong>Esponente di un primo in \\(n!\\)</strong> (Legendre): \\(\\left\\lfloor n/p\\right\\rfloor+\\left\\lfloor n/p^2\\right\\rfloor+\\cdots\\). Gli zeri finali di \\(n!\\) contano i fattori 5.</p>" },
+      { area: "Combinatoria e probabilità", html:
+        "<p><strong>Anagrammi con ripetizioni.</strong> Con lettere ripetute: \\(\\dfrac{n!}{k_1!\\,k_2!\\cdots}\\).</p>" +
+        "<p><strong>Percorsi su griglia</strong> da \\((0,0)\\) a \\((a,b)\\) con passi a destra/alto: \\(\\binom{a+b}{a}\\).</p>" +
+        "<p>Combinazioni \\(\\binom{n}{k}\\) e triangolo di Tartaglia; principio dei cassetti.</p>" },
+      { area: "Geometria", html:
+        "<p><strong>Formula di Gauss (shoelace).</strong> Area di un poligono dai vertici: \\(A=\\tfrac12\\left|\\sum (x_i y_{i+1}-x_{i+1} y_i)\\right|\\).</p>" +
+        "<p><strong>Teorema di Pick.</strong> Per un poligono a vertici interi: \\(A=I+\\dfrac{B}{2}-1\\).</p>" +
+        "<p>Angolo interno di un poligono regolare di \\(n\\) lati: \\(\\dfrac{(n-2)\\cdot 180^\\circ}{n}\\).</p>" },
+      { area: "Algebra e logica", html:
+        "<p><strong>Formule di Viète.</strong> Per \\(x^2 - Sx + P = 0\\): somma delle radici \\(S\\), prodotto \\(P\\); così \\(r_1^2+r_2^2=S^2-2P\\).</p>" +
+        "<p><strong>Identità.</strong> Da \\(x+\\tfrac1x=k\\) segue \\(x^2+\\tfrac1{x^2}=k^2-2\\).</p>" +
+        "<p><strong>Somme geometriche.</strong> \\(1+2+4+\\cdots+2^{n}=2^{\\,n+1}-1\\).</p>" }
+    ],
+    esperto: [
+      { area: "Teoria dei numeri", html:
+        "<p><strong>Piccolo teorema di Fermat.</strong> Se \\(p\\) è primo e \\(p\\nmid a\\), allora \\(a^{p-1}\\equiv 1 \\pmod p\\).</p>" +
+        "<p><strong>Ordine.</strong> Il più piccolo \\(d>0\\) con \\(a^d\\equiv 1\\) divide \\(p-1\\): riduci l'esponente modulo \\(d\\) (o modulo \\(p-1\\)).</p>" +
+        "<p><strong>Somma dei divisori</strong> (moltiplicativa): \\(\\sigma(p^a)=\\dfrac{p^{a+1}-1}{p-1}\\). <strong>Teorema cinese del resto</strong> per sistemi di congruenze.</p>" },
+      { area: "Combinatoria e probabilità", html:
+        "<p><strong>Dismutazioni</strong> (permutazioni senza punti fissi): \\(D_n=(n-1)(D_{n-1}+D_{n-2})\\), con \\(D_1=0,\\ D_2=1\\).</p>" +
+        "<p><strong>Inclusione-esclusione</strong> per contare unioni di insiemi con sovrapposizioni.</p>" +
+        "<p><strong>Stelle e sbarre.</strong> Distribuire \\(n\\) oggetti identici in \\(k\\) gruppi: \\(\\binom{n+k-1}{k-1}\\).</p>" },
+      { area: "Geometria", html:
+        "<p><strong>Teorema di Pick</strong> per contare i punti interni: \\(I=A-\\dfrac{B}{2}+1\\).</p>" +
+        "<p><strong>Raggio inscritto.</strong> In un triangolo rettangolo \\(r=\\dfrac{a+b-c}{2}=\\dfrac{\\text{Area}}{s}\\).</p>" +
+        "<p><strong>Diagonali.</strong> In un poligono convesso (diagonali in posizione generica) i punti d'intersezione interni sono \\(\\binom{n}{4}\\).</p>" },
+      { area: "Algebra e logica", html:
+        "<p><strong>Viète sulle potenze.</strong> \\(r_1^3+r_2^3=(r_1+r_2)^3-3r_1 r_2(r_1+r_2)=S^3-3PS\\).</p>" +
+        "<p><strong>Ricorrenze lineari.</strong> Da \\(a_{n+1}=2a_n+1\\): posto \\(b_n=a_n+1\\) si ha \\(b_{n+1}=2b_n\\).</p>" +
+        "<p><strong>Somma dei cubi.</strong> \\(1^3+2^3+\\cdots+n^3=\\left(\\dfrac{n(n+1)}{2}\\right)^2\\).</p>" }
+    ],
+    superesperto: [
+      { area: "Teoria dei numeri", html:
+        "<p><strong>Teorema di Eulero.</strong> Se \\(\\gcd(a,m)=1\\), \\(a^{\\varphi(m)}\\equiv 1 \\pmod m\\); \\(\\varphi\\) è la funzione di Eulero.</p>" +
+        "<p><strong>Teorema di Wilson.</strong> Se \\(p\\) è primo, \\((p-1)!\\equiv -1 \\pmod p\\).</p>" +
+        "<p><strong>Ultime tre cifre.</strong> Sono il resto modulo 1000: la periodicità delle potenze ha periodo divisore di \\(\\lambda(1000)=100\\).</p>" },
+      { area: "Combinatoria e probabilità", html:
+        "<p><strong>Numeri di Catalan.</strong> \\(C_n=\\dfrac{1}{n+1}\\dbinom{2n}{n}\\): contano accoppiamenti non intersecanti, parentesi ben formate, triangolazioni.</p>" +
+        "<p><strong>Fibonacci.</strong> I sottoinsiemi di \\(\\{1,\\dots,n\\}\\) senza due elementi consecutivi sono \\(F_{n+2}\\).</p>" +
+        "<p>Le dismutazioni valgono circa \\(n!/e\\).</p>" },
+      { area: "Geometria", html:
+        "<p><strong>Teorema delle corde</strong> (potenza di un punto): se due corde si incontrano, \\(PA\\cdot PB = PC\\cdot PD\\).</p>" +
+        "<p><strong>Diagonale nello spazio.</strong> Per un parallelepipedo di spigoli \\(a,b,c\\): \\(d^2=a^2+b^2+c^2\\).</p>" +
+        "<p><strong>Solidi simili.</strong> Con rapporto \\(k\\), le aree stanno come \\(k^2\\) e i volumi come \\(k^3\\).</p>" },
+      { area: "Algebra e logica", html:
+        "<p><strong>Differenza di quadrati.</strong> \\(x^2-y^2=(x-y)(x+y)\\): le soluzioni intere corrispondono alle fattorizzazioni con fattori della stessa parità.</p>" +
+        "<p><strong>Somme miste.</strong> \\(\\sum_{i=1}^{n} i\\,2^{i}=(n-1)2^{\\,n+1}+2\\) (si ricava da \\(2S-S\\)).</p>" +
+        "<p><strong>Ricorrenze con punto fisso.</strong> Da \\(a_{n+1}=3a_n-2\\): il punto fisso è \\(1\\) e \\(a_n-1=(a_1-1)3^{\\,n-1}\\).</p>" }
+    ]
+  };
+  function buildTeoria() {
+    var wrap = document.getElementById("teoria-richiami");
+    if (!wrap) return;
+    wrap.innerHTML = "";
+    (TEORIA[level] || TEORIA.base).forEach(function (c) {
+      var card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = '<span class="area-tag">' + c.area + '</span><h2>Richiami — ' + c.area + '</h2>' + c.html;
+      wrap.appendChild(card);
+    });
+    typeset(wrap);
+  }
+
   /* ---------- livello di difficoltà ---------- */
   var LEVELS = [["base", "Base"], ["avanzato", "Avanzato"], ["esperto", "Esperto"], ["superesperto", "Super esperto"]];
   var LEVEL_KEYS = LEVELS.map(function (l) { return l[0]; });
@@ -1516,7 +1683,7 @@ if (typeof module !== "undefined" && module.exports) {
       });
     });
   }
-  function setLevel(l) { if (l === level) return; level = l; try { localStorage.setItem("olimat-livello", l); } catch (e) {} renderLevelSelectors(); buildPratica(); resetQuiz(); }
+  function setLevel(l) { if (l === level) return; level = l; try { localStorage.setItem("olimat-livello", l); } catch (e) {} renderLevelSelectors(); buildTeoria(); buildPratica(); resetQuiz(); sim.applyLevel(level); }
   function makeLevelSelector() {
     var d = document.createElement("div"); d.className = "seg"; d.setAttribute("role", "group"); d.setAttribute("aria-label", "Livello di difficoltà");
     var html = '<span class="seg-label">Livello</span>';
@@ -1684,12 +1851,16 @@ if (typeof module !== "undefined" && module.exports) {
   document.getElementById("r-restart").addEventListener("click", function () { resetQuiz(); });
 
   /* ---------- init ---------- */
+  document.getElementById("teoria-levelbar").appendChild(makeLevelSelector());
+  document.getElementById("sim-levelbar").appendChild(makeLevelSelector());
   document.getElementById("pratica-levelbar").appendChild(makeLevelSelector());
   document.getElementById("quiz-levelbar").appendChild(makeLevelSelector());
   document.getElementById("pratica-refresh").addEventListener("click", function () { buildPratica(); typeset(document.getElementById("pratica-list")); });
   renderLevelSelectors();
+  buildTeoria();
   buildPratica();
   resetQuiz();
+  sim.applyLevel(level);
   window.addEventListener("load", function () { typeset(document.body); });
 })();
 </script>
