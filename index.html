@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<title>Giochi di Archimede — Trainer (triennio)</title>
-<meta name="description" content="Preparazione ai Giochi di Archimede (Olimpiadi della Matematica, triennio): teoria, simulazioni interattive, pratica guidata e quiz che simula la gara.">
+<title>Olimpiadi di Matematica</title>
+<meta name="description" content="Preparazione alle Olimpiadi di Matematica: teoria, simulazioni interattive, pratica guidata con esercizi sempre nuovi e quiz a difficoltà crescente.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -14,7 +14,7 @@
 /* Evita il flash del tema sbagliato: applica la scelta salvata prima del primo paint. */
 (function () {
   try {
-    var t = localStorage.getItem('archimede-theme');
+    var t = localStorage.getItem('olimat-theme');
     if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
   } catch (e) {}
 })();
@@ -197,8 +197,8 @@ input[type="range"]{accent-color:var(--accent); width:100%}
 <header class="masthead">
   <div class="masthead-in">
     <div>
-      <h1>Giochi di Archimede</h1>
-      <p class="sub">Trainer di preparazione — Olimpiadi della Matematica, triennio</p>
+      <h1>Olimpiadi di Matematica</h1>
+      <p class="sub">Preparazione: teoria, simulazioni, pratica e quiz</p>
     </div>
     <button id="themeBtn" class="theme-toggle" type="button" aria-label="Cambia tema chiaro/scuro" title="Cambia tema">
       <svg class="ic" id="iconSun" viewBox="0 0 24 24" hidden><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
@@ -218,11 +218,11 @@ input[type="range"]{accent-color:var(--accent); width:100%}
   <!-- ================= TEORIA ================= -->
   <section class="panel active" id="p-teoria" role="tabpanel" aria-labelledby="tab-teoria" tabindex="0">
     <div class="card">
-      <h2>Come funziona la gara</h2>
-      <p class="lead">I Giochi di Archimede sono il primo livello delle Olimpiadi della Matematica (categoria triennio). Ecco i punti che contano di più per la strategia.</p>
+      <h2>Come funzionano le gare</h2>
+      <p class="lead">Le Olimpiadi di Matematica propongono quesiti in cui contano intuito e metodo più del calcolo lungo. Ecco i punti che contano di più per la strategia.</p>
       <ul class="pill-list">
         <li>Quesiti a <strong>risposta multipla</strong> con cinque alternative (A–E) e, in genere, qualche domanda a risposta numerica.</li>
-        <li>In questa fase <strong>non ci sono penalità</strong> per le risposte errate: conviene <em>rispondere a tutto</em>, anche tirando a indovinare quando il tempo stringe.</li>
+        <li>Nelle prime fasi <strong>di solito non ci sono penalità</strong> per le risposte errate: conviene <em>rispondere a tutto</em>, anche tirando a indovinare quando il tempo stringe.</li>
         <li>La difficoltà cresce lungo la prova: incassa presto i quesiti sicuri, poi torna sui più duri.</li>
         <li>Non servono strumenti: niente calcolatrice, solo carta, penna e ragionamento.</li>
       </ul>
@@ -368,7 +368,7 @@ input[type="range"]{accent-color:var(--accent); width:100%}
     </div>
   </section>
 
-  <p class="foot">Preparazione ai Giochi di Archimede — triennio · <span class="mono">olimpiadi.ventilii.ai</span></p>
+  <p class="foot">Olimpiadi di Matematica · <span class="mono">olimpiadi.ventilii.ai</span></p>
 </main>
 
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
@@ -414,7 +414,7 @@ input[type="range"]{accent-color:var(--accent); width:100%}
   document.getElementById("themeBtn").addEventListener("click", function () {
     var next = currentTheme() === "dark" ? "light" : "dark";
     root.setAttribute("data-theme", next);
-    try { localStorage.setItem("archimede-theme", next); } catch (e) {}
+    try { localStorage.setItem("olimat-theme", next); } catch (e) {}
     paintToggle();
     if (sim.visible) sim.draw();
   });
@@ -750,369 +750,763 @@ input[type="range"]{accent-color:var(--accent); width:100%}
     return api;
   })();
 
-  /* ================= GENERATORI PARAMETRICI (Base / Avanzato) ================= */
-  var AREAS = ["Teoria dei numeri", "Combinatoria e probabilità", "Geometria", "Algebra e logica"];
+  /* ================= CONTENUTI E MOTORI (generatori Base/Avanzato/Esperto/Super esperto) ================= */
+/* Olimpiadi di Matematica — generatori parametrici (Base / Avanzato / Esperto / Super esperto).
+   Codice framework-free, portabile 1:1 dentro l'IIFE dell'index.html.
+   Le stringhe LaTeX usano "\\(" / "\\)" (a runtime diventano \( \)). */
 
-  function randInt(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
-  function choice(a) { return a[Math.floor(Math.random() * a.length)]; }
-  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
-  function sample(a, k) { return shuffle(a).slice(0, k); }
-  function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { var t = b; b = a % b; a = t; } return a; }
-  function fact(n) { var r = 1; for (var i = 2; i <= n; i++) r *= i; return r; }
-  function nCr(n, k) { if (k < 0 || k > n) return 0; k = Math.min(k, n - k); var r = 1; for (var i = 0; i < k; i++) r = r * (n - i) / (i + 1); return Math.round(r); }
-  function modpow(b, e, m) { b %= m; var r = 1; while (e > 0) { if (e & 1) r = (r * b) % m; b = (b * b) % m; e = Math.floor(e / 2); } return r; }
-  function trailingZeros(n) { var c = 0, p = 5; while (p <= n) { c += Math.floor(n / p); p *= 5; } return c; }
-  function legendre(n, p) { var c = 0, q = p; while (q <= n) { c += Math.floor(n / q); q *= p; } return c; }
-  function lastDigitCycle(a) { var d = a % 10, cyc = [], v = d; do { cyc.push(v); v = (v * d) % 10; } while (v !== d && cyc.length < 20); return cyc; }
-  function lastDigitPow(a, k) { var c = lastDigitCycle(a); return c[(k - 1) % c.length]; }
+var AREAS = ["Teoria dei numeri", "Combinatoria e probabilità", "Geometria", "Algebra e logica"];
 
-  function makeOptions(answer, distractors) {
-    var opts = [answer];
-    var cand = (distractors || []).slice();
-    for (var i = 0; i < cand.length && opts.length < 5; i++) {
-      var d = cand[i];
-      if (typeof d !== "number" || !isFinite(d)) continue;
-      d = Math.round(d);
-      if (d < 0) continue;
-      if (opts.indexOf(d) === -1) opts.push(d);
-    }
-    var deltas = [1, -1, 2, -2, 3, -3, 4, 5];
-    var di = 0;
-    while (opts.length < 5 && di < 60) {
-      var step = (Math.abs(answer) > 20) ? Math.max(1, Math.round(Math.abs(answer) * 0.1)) : 1;
-      var f = Math.round(answer + deltas[di % deltas.length] * step);
-      di++;
-      if (f !== answer && f >= 0 && opts.indexOf(f) === -1) opts.push(f);
-    }
-    while (opts.length < 5) { var r = answer + randInt(1, 30); if (opts.indexOf(r) === -1) opts.push(r); }
-    var pair = opts.map(function (v, ix) { return { v: v, correct: ix === 0 }; });
-    pair = shuffle(pair);
-    return { options: pair.map(function (p) { return String(p.v); }), correct: pair.map(function (p) { return p.correct; }).indexOf(true) };
+/* ---------- helpers ---------- */
+function randInt(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+function choice(a) { return a[Math.floor(Math.random() * a.length)]; }
+function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function sample(a, k) { return shuffle(a).slice(0, k); }
+function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { var t = b; b = a % b; a = t; } return a; }
+function fact(n) { var r = 1; for (var i = 2; i <= n; i++) r *= i; return r; }
+function nCr(n, k) { if (k < 0 || k > n) return 0; k = Math.min(k, n - k); var r = 1; for (var i = 0; i < k; i++) r = r * (n - i) / (i + 1); return Math.round(r); }
+function modpow(b, e, m) { b %= m; var r = 1; while (e > 0) { if (e & 1) r = (r * b) % m; b = (b * b) % m; e = Math.floor(e / 2); } return r; }
+function trailingZeros(n) { var c = 0, p = 5; while (p <= n) { c += Math.floor(n / p); p *= 5; } return c; }
+function legendre(n, p) { var c = 0, q = p; while (q <= n) { c += Math.floor(n / q); q *= p; } return c; }
+function lastDigitCycle(a) { var d = a % 10, cyc = [], v = d; do { cyc.push(v); v = (v * d) % 10; } while (v !== d && cyc.length < 20); return cyc; }
+function lastDigitPow(a, k) { var c = lastDigitCycle(a); return c[(k - 1) % c.length]; }
+
+/* costruisce 5 opzioni (risposta + 4 distrattori), mescolate; ritorna {options, correct} */
+function makeOptions(answer, distractors) {
+  var opts = [answer];
+  var cand = (distractors || []).slice();
+  for (var i = 0; i < cand.length && opts.length < 5; i++) {
+    var d = cand[i];
+    if (typeof d !== "number" || !isFinite(d)) continue;
+    d = Math.round(d);
+    if (d < 0) continue;
+    if (opts.indexOf(d) === -1) opts.push(d);
   }
-  function shuffleQ(q) {
-    var pair = q.options.map(function (o, ix) { return { o: o, correct: ix === q.correct }; });
-    pair = shuffle(pair);
-    return { options: pair.map(function (p) { return p.o; }), correct: pair.map(function (p) { return p.correct; }).indexOf(true) };
+  var deltas = [1, -1, 2, -2, 3, -3, 4, 5];
+  var di = 0;
+  while (opts.length < 5 && di < 60) {
+    var step = (Math.abs(answer) > 20) ? Math.max(1, Math.round(Math.abs(answer) * 0.1)) : 1;
+    var f = Math.round(answer + deltas[di % deltas.length] * step);
+    di++;
+    if (f !== answer && f >= 0 && opts.indexOf(f) === -1) opts.push(f);
   }
+  while (opts.length < 5) { var r = answer + randInt(1, 30); if (opts.indexOf(r) === -1) opts.push(r); }
+  var pair = opts.map(function (v, ix) { return { v: v, correct: ix === 0 }; });
+  pair = shuffle(pair);
+  return {
+    options: pair.map(function (p) { return String(p.v); }),
+    correct: pair.map(function (p) { return p.correct; }).indexOf(true)
+  };
+}
+function shuffleQ(q) {
+  var pair = q.options.map(function (o, ix) { return { o: o, correct: ix === q.correct }; });
+  pair = shuffle(pair);
+  return { options: pair.map(function (p) { return p.o; }), correct: pair.map(function (p) { return p.correct; }).indexOf(true) };
+}
 
-  var GEN = { base: {}, avanzato: {} };
+/* ---------- generatori numerici: gen() -> {text, answer, hints[], solution, distractors[]} ---------- */
+var GEN = { base: {}, avanzato: {}, esperto: {}, superesperto: {} };
 
-  GEN.base["Teoria dei numeri"] = [
-    { id: "b_tdn_zeri", gen: function () {
-      var n = randInt(12, 60), ans = trailingZeros(n);
-      var t5 = Math.floor(n / 5), t25 = Math.floor(n / 25);
-      return { text: "Con quanti zeri consecutivi termina il numero \\(" + n + "!\\) (il fattoriale di " + n + ")?",
-        answer: ans,
-        hints: ["Uno zero finale nasce da un fattore \\(10 = 2\\times 5\\): i fattori 2 abbondano, quindi conta i fattori 5.",
-          "Somma i multipli di 5 e di 25 fino a " + n + ": \\(\\left\\lfloor " + n + "/5\\right\\rfloor + \\left\\lfloor " + n + "/25\\right\\rfloor\\)."],
-        solution: "Gli zeri finali di \\(n!\\) sono \\(\\left\\lfloor n/5\\right\\rfloor + \\left\\lfloor n/25\\right\\rfloor + \\cdots\\). Per \\(n=" + n + "\\): \\(" + t5 + " + " + t25 + " = " + ans + "\\).",
-        distractors: [t5, ans + 1, ans - 1, ans + 2, t5 + t25 + 1] };
-    } },
-    { id: "b_tdn_ultima", gen: function () {
-      var a = choice([2, 3, 4, 7, 8, 9]), k = randInt(15, 120), cyc = lastDigitCycle(a), ans = cyc[(k - 1) % cyc.length];
-      return { text: "Qual è l'ultima cifra di \\(" + a + "^{" + k + "}\\)?",
-        answer: ans,
-        hints: ["Osserva come finiscono le prime potenze di " + a + " e cerca un ciclo.",
-          "Le ultime cifre di \\(" + a + "^k\\) si ripetono con periodo " + cyc.length + ": \\([" + cyc.join(",") + "]\\). Calcola \\(" + k + " \\bmod " + cyc.length + "\\)."],
-        solution: "Le ultime cifre di \\(" + a + "^k\\) formano il ciclo \\([" + cyc.join(",") + "]\\) di periodo " + cyc.length + ". Poiché \\(" + k + " \\equiv " + (((k - 1) % cyc.length) + 1) + " \\pmod{" + cyc.length + "}\\), l'ultima cifra è \\(" + ans + "\\).",
-        distractors: cyc.concat([a % 10]) };
-    } },
-    { id: "b_tdn_divisori", gen: function () {
-      var ps = shuffle([2, 3, 5, 7]), p = ps[0], q = ps[1], e1 = randInt(1, 3), e2 = randInt(1, 2);
-      var N = Math.pow(p, e1) * Math.pow(q, e2), ans = (e1 + 1) * (e2 + 1);
-      return { text: "Quanti divisori positivi ha il numero \\(" + N + " = " + p + "^{" + e1 + "}\\cdot " + q + "^{" + e2 + "}\\)?",
-        answer: ans,
-        hints: ["Se \\(N = p^{a}\\cdot q^{b}\\), ogni divisore si ottiene scegliendo un esponente per \\(p\\) (da 0 ad \\(a\\)) e uno per \\(q\\).",
-          "Il numero di divisori è \\((a+1)(b+1)\\)."],
-        solution: "Con \\(N = p^{a}q^{b}\\) i divisori sono \\((a+1)(b+1)\\). Qui \\((" + e1 + "+1)(" + e2 + "+1) = " + (e1 + 1) + "\\cdot " + (e2 + 1) + " = " + ans + "\\).",
-        distractors: [e1 * e2, e1 + e2, ans + 1, ans - 1, e1 * e2 + 2] };
-    } }
-  ];
+/* ===== BASE — Teoria dei numeri ===== */
+GEN.base["Teoria dei numeri"] = [
+  { id: "b_tdn_zeri", gen: function () {
+    var n = randInt(12, 60), ans = trailingZeros(n);
+    var t5 = Math.floor(n / 5), t25 = Math.floor(n / 25);
+    return {
+      text: "Con quanti zeri consecutivi termina il numero \\(" + n + "!\\) (il fattoriale di " + n + ")?",
+      answer: ans,
+      hints: ["Uno zero finale nasce da un fattore \\(10 = 2\\times 5\\): i fattori 2 abbondano, quindi conta i fattori 5.",
+        "Somma i multipli di 5 e di 25 fino a " + n + ": \\(\\left\\lfloor " + n + "/5\\right\\rfloor + \\left\\lfloor " + n + "/25\\right\\rfloor\\)."],
+      solution: "Gli zeri finali di \\(n!\\) sono \\(\\left\\lfloor n/5\\right\\rfloor + \\left\\lfloor n/25\\right\\rfloor + \\cdots\\). Per \\(n=" + n + "\\): \\(" + t5 + " + " + t25 + " = " + ans + "\\).",
+      distractors: [t5, ans + 1, ans - 1, ans + 2, t5 + t25 + 1]
+    };
+  } },
+  { id: "b_tdn_ultima", gen: function () {
+    var a = choice([2, 3, 4, 7, 8, 9]), k = randInt(15, 120), cyc = lastDigitCycle(a), ans = cyc[(k - 1) % cyc.length];
+    return {
+      text: "Qual è l'ultima cifra di \\(" + a + "^{" + k + "}\\)?",
+      answer: ans,
+      hints: ["Osserva come finiscono le prime potenze di " + a + " e cerca un ciclo.",
+        "Le ultime cifre di \\(" + a + "^k\\) si ripetono con periodo " + cyc.length + ": \\([" + cyc.join(",") + "]\\). Calcola \\(" + k + " \\bmod " + cyc.length + "\\)."],
+      solution: "Le ultime cifre di \\(" + a + "^k\\) formano il ciclo \\([" + cyc.join(",") + "]\\) di periodo " + cyc.length + ". Poiché \\(" + k + " \\equiv " + (((k - 1) % cyc.length) + 1) + " \\pmod{" + cyc.length + "}\\), l'ultima cifra è \\(" + ans + "\\).",
+      distractors: cyc.concat([a % 10])
+    };
+  } },
+  { id: "b_tdn_divisori", gen: function () {
+    var ps = shuffle([2, 3, 5, 7]), p = ps[0], q = ps[1], e1 = randInt(1, 3), e2 = randInt(1, 2);
+    var N = Math.pow(p, e1) * Math.pow(q, e2), ans = (e1 + 1) * (e2 + 1);
+    return {
+      text: "Quanti divisori positivi ha il numero \\(" + N + " = " + p + "^{" + e1 + "}\\cdot " + q + "^{" + e2 + "}\\)?",
+      answer: ans,
+      hints: ["Se \\(N = p^{a}\\cdot q^{b}\\), ogni divisore si ottiene scegliendo un esponente per \\(p\\) (da 0 ad \\(a\\)) e uno per \\(q\\).",
+        "Il numero di divisori è \\((a+1)(b+1)\\)."],
+      solution: "Con \\(N = p^{a}q^{b}\\) i divisori sono \\((a+1)(b+1)\\). Qui \\((" + e1 + "+1)(" + e2 + "+1) = " + (e1 + 1) + "\\cdot " + (e2 + 1) + " = " + ans + "\\).",
+      distractors: [e1 * e2, e1 + e2, ans + 1, ans - 1, e1 * e2 + 2]
+    };
+  } }
+];
 
-  GEN.base["Combinatoria e probabilità"] = [
-    { id: "b_comb_strette", gen: function () {
-      var n = randInt(5, 15), ans = n * (n - 1) / 2;
-      return { text: "A una festa ci sono " + n + " persone e ognuna stringe la mano a ogni altra esattamente una volta. Quante strette di mano avvengono in tutto?",
-        answer: ans,
-        hints: ["Ogni stretta coinvolge una coppia di persone: conta le coppie.",
-          "Le coppie di " + n + " persone sono \\(\\binom{" + n + "}{2} = \\dfrac{" + n + "\\cdot " + (n - 1) + "}{2}\\)."],
-        solution: "Il numero di strette è \\(\\binom{" + n + "}{2} = \\dfrac{" + n + "\\cdot " + (n - 1) + "}{2} = " + ans + "\\).",
-        distractors: [n * (n - 1), n * (n + 1) / 2, n * n, n] };
-    } },
-    { id: "b_comb_cifre", gen: function () {
-      var m = randInt(4, 7), ans = m * (m - 1) * (m - 2);
-      var set = []; for (var i = 1; i <= m; i++) set.push(i);
-      return { text: "Quanti numeri di 3 cifre distinte si possono formare usando solo le cifre \\(" + set.join(",") + "\\)?",
-        answer: ans,
-        hints: ["Le cifre non si ripetono: quante scelte hai per la prima cifra? e per la seconda?",
-          "\\(" + m + "\\) scelte, poi \\(" + (m - 1) + "\\), poi \\(" + (m - 2) + "\\): moltiplicale."],
-        solution: "Cifre distinte: \\(" + m + "\\cdot " + (m - 1) + "\\cdot " + (m - 2) + " = " + ans + "\\).",
-        distractors: [Math.pow(m, 3), m * (m - 1), nCr(m, 3), m * (m - 1) * (m - 2) + m] };
-    } },
-    { id: "b_comb_blocco", gen: function () {
-      var g = randInt(2, 4), h = randInt(2, 3), ans = fact(g + 1) * fact(h);
-      return { text: "In quanti modi si dispongono in fila " + g + " libri di matematica e " + h + " di fisica, se i libri di fisica devono restare tutti accanto?",
-        answer: ans,
-        hints: ["Tratta i libri di fisica come un unico blocco che si sposta insieme.",
-          "Con il blocco hai \\(" + (g + 1) + "\\) oggetti da ordinare (\\(" + (g + 1) + "!\\)); dentro il blocco i libri di fisica si permutano (\\(" + h + "!\\))."],
-        solution: "Blocco unico: \\(" + (g + 1) + "! = " + fact(g + 1) + "\\) ordinamenti; dentro il blocco \\(" + h + "! = " + fact(h) + "\\). Totale \\(" + fact(g + 1) + "\\cdot " + fact(h) + " = " + ans + "\\).",
-        distractors: [fact(g + h), fact(g + 1) * h, fact(g + 1), fact(g) * fact(h)] };
-    } }
-  ];
+/* ===== BASE — Combinatoria e probabilità ===== */
+GEN.base["Combinatoria e probabilità"] = [
+  { id: "b_comb_strette", gen: function () {
+    var n = randInt(5, 15), ans = n * (n - 1) / 2;
+    return {
+      text: "A una festa ci sono " + n + " persone e ognuna stringe la mano a ogni altra esattamente una volta. Quante strette di mano avvengono in tutto?",
+      answer: ans,
+      hints: ["Ogni stretta coinvolge una coppia di persone: conta le coppie.",
+        "Le coppie di " + n + " persone sono \\(\\binom{" + n + "}{2} = \\dfrac{" + n + "\\cdot " + (n - 1) + "}{2}\\)."],
+      solution: "Il numero di strette è \\(\\binom{" + n + "}{2} = \\dfrac{" + n + "\\cdot " + (n - 1) + "}{2} = " + ans + "\\).",
+      distractors: [n * (n - 1), n * (n + 1) / 2, n * n, n]
+    };
+  } },
+  { id: "b_comb_cifre", gen: function () {
+    var m = randInt(4, 7), ans = m * (m - 1) * (m - 2);
+    var set = []; for (var i = 1; i <= m; i++) set.push(i);
+    return {
+      text: "Quanti numeri di 3 cifre distinte si possono formare usando solo le cifre \\(" + set.join(",") + "\\)?",
+      answer: ans,
+      hints: ["Le cifre non si ripetono: quante scelte hai per la prima cifra? e per la seconda?",
+        "\\(" + m + "\\) scelte, poi \\(" + (m - 1) + "\\), poi \\(" + (m - 2) + "\\): moltiplicale."],
+      solution: "Cifre distinte: \\(" + m + "\\cdot " + (m - 1) + "\\cdot " + (m - 2) + " = " + ans + "\\).",
+      distractors: [Math.pow(m, 3), m * (m - 1), nCr(m, 3), m * (m - 1) * (m - 2) + m]
+    };
+  } },
+  { id: "b_comb_blocco", gen: function () {
+    var g = randInt(2, 4), h = randInt(2, 3), ans = fact(g + 1) * fact(h);
+    return {
+      text: "In quanti modi si dispongono in fila " + g + " libri di matematica e " + h + " di fisica, se i libri di fisica devono restare tutti accanto?",
+      answer: ans,
+      hints: ["Tratta i libri di fisica come un unico blocco che si sposta insieme.",
+        "Con il blocco hai \\(" + (g + 1) + "\\) oggetti da ordinare (\\(" + (g + 1) + "!\\)); dentro il blocco i libri di fisica si permutano (\\(" + h + "!\\))."],
+      solution: "Blocco unico: \\(" + (g + 1) + "! = " + fact(g + 1) + "\\) ordinamenti; dentro il blocco \\(" + h + "! = " + fact(h) + "\\). Totale \\(" + fact(g + 1) + "\\cdot " + fact(h) + " = " + ans + "\\).",
+      distractors: [fact(g + h), fact(g + 1) * h, fact(g + 1), fact(g) * fact(h)]
+    };
+  } }
+];
 
-  GEN.base["Geometria"] = [
-    { id: "b_geo_quadrato", gen: function () {
-      var s = randInt(4, 15), area = s * s, ans = 4 * s;
-      return { text: "Un quadrato ha area \\(" + area + "\\). Qual è il suo perimetro?",
-        answer: ans,
-        hints: ["Dall'area ricavi il lato: \\(\\ell = \\sqrt{\\text{area}}\\).",
-          "Il lato è \\(\\sqrt{" + area + "} = " + s + "\\); il perimetro è \\(4\\ell\\)."],
-        solution: "Lato \\(= \\sqrt{" + area + "} = " + s + "\\); perimetro \\(= 4\\cdot " + s + " = " + ans + "\\).",
-        distractors: [area, 2 * s, 8 * s, 3 * s] };
-    } },
-    { id: "b_geo_angoli", gen: function () {
-      var n = randInt(5, 12), ans = (n - 2) * 180;
-      return { text: "Quanto vale la somma degli angoli interni di un poligono di " + n + " lati (in gradi)?",
-        answer: ans,
-        hints: ["Un poligono di \\(n\\) lati si divide in \\(n-2\\) triangoli.",
-          "La somma è \\((n-2)\\cdot 180^\\circ\\)."],
-        solution: "Somma \\(= (" + n + "-2)\\cdot 180 = " + (n - 2) + "\\cdot 180 = " + ans + "\\) gradi.",
-        distractors: [n * 180, (n - 1) * 180, (n - 2) * 90, 360] };
-    } },
-    { id: "b_geo_rettangolo", gen: function () {
-      var a = randInt(3, 12), b = randInt(3, 12); if ((a * b) % 2 !== 0) b = (b < 12) ? b + 1 : b - 1;
-      var ans = a * b / 2;
-      return { text: "Un triangolo rettangolo ha i due cateti lunghi " + a + " e " + b + ". Qual è la sua area?",
-        answer: ans,
-        hints: ["Nei triangoli rettangoli i due cateti fanno da base e altezza.",
-          "Area \\(= \\dfrac{\\text{cateto}_1\\cdot \\text{cateto}_2}{2}\\)."],
-        solution: "Area \\(= \\dfrac{" + a + "\\cdot " + b + "}{2} = " + ans + "\\).",
-        distractors: [a * b, a + b, ans + 1, ans - 1] };
-    } }
-  ];
+/* ===== BASE — Geometria ===== */
+GEN.base["Geometria"] = [
+  { id: "b_geo_quadrato", gen: function () {
+    var s = randInt(4, 15), area = s * s, ans = 4 * s;
+    return {
+      text: "Un quadrato ha area \\(" + area + "\\). Qual è il suo perimetro?",
+      answer: ans,
+      hints: ["Dall'area ricavi il lato: \\(\\ell = \\sqrt{\\text{area}}\\).",
+        "Il lato è \\(\\sqrt{" + area + "} = " + s + "\\); il perimetro è \\(4\\ell\\)."],
+      solution: "Lato \\(= \\sqrt{" + area + "} = " + s + "\\); perimetro \\(= 4\\cdot " + s + " = " + ans + "\\).",
+      distractors: [area, 2 * s, 8 * s, 3 * s]
+    };
+  } },
+  { id: "b_geo_angoli", gen: function () {
+    var n = randInt(5, 12), ans = (n - 2) * 180;
+    return {
+      text: "Quanto vale la somma degli angoli interni di un poligono di " + n + " lati (in gradi)?",
+      answer: ans,
+      hints: ["Un poligono di \\(n\\) lati si divide in \\(n-2\\) triangoli.",
+        "La somma è \\((n-2)\\cdot 180^\\circ\\)."],
+      solution: "Somma \\(= (" + n + "-2)\\cdot 180 = " + (n - 2) + "\\cdot 180 = " + ans + "\\) gradi.",
+      distractors: [n * 180, (n - 1) * 180, (n - 2) * 90, 360]
+    };
+  } },
+  { id: "b_geo_rettangolo", gen: function () {
+    var a = randInt(3, 12), b = randInt(3, 12); if ((a * b) % 2 !== 0) b = (b < 12) ? b + 1 : b - 1;
+    var ans = a * b / 2;
+    return {
+      text: "Un triangolo rettangolo ha i due cateti lunghi " + a + " e " + b + ". Qual è la sua area?",
+      answer: ans,
+      hints: ["Nei triangoli rettangoli i due cateti fanno da base e altezza.",
+        "Area \\(= \\dfrac{\\text{cateto}_1\\cdot \\text{cateto}_2}{2}\\)."],
+      solution: "Area \\(= \\dfrac{" + a + "\\cdot " + b + "}{2} = " + ans + "\\).",
+      distractors: [a * b, a + b, ans + 1, ans - 1]
+    };
+  } }
+];
 
-  GEN.base["Algebra e logica"] = [
-    { id: "b_alg_gauss", gen: function () {
-      var n = randInt(20, 100), ans = n * (n + 1) / 2;
-      return { text: "Quanto vale la somma \\(1 + 2 + 3 + \\cdots + " + n + "\\)?",
-        answer: ans,
-        hints: ["Accoppia il primo con l'ultimo, il secondo con il penultimo: ogni coppia dà lo stesso totale.",
-          "\\(1+2+\\cdots+n = \\dfrac{n(n+1)}{2}\\)."],
-        solution: "\\(1+2+\\cdots+" + n + " = \\dfrac{" + n + "\\cdot " + (n + 1) + "}{2} = " + ans + "\\).",
-        distractors: [n * (n + 1), n * (n - 1) / 2, n * n, ans + n] };
-    } },
-    { id: "b_alg_sommaquad", gen: function () {
-      var a = randInt(2, 12), b = randInt(2, 12), S = a + b, P = a * b, ans = S * S - 2 * P;
-      return { text: "Due numeri hanno somma " + S + " e prodotto " + P + ". Quanto vale la somma dei loro quadrati?",
-        answer: ans,
-        hints: ["Ricorda \\((a+b)^2 = a^2 + 2ab + b^2\\).",
-          "Quindi \\(a^2+b^2 = (a+b)^2 - 2ab\\)."],
-        solution: "\\(a^2+b^2 = (a+b)^2 - 2ab = " + S + "^2 - 2\\cdot " + P + " = " + (S * S) + " - " + (2 * P) + " = " + ans + "\\).",
-        distractors: [S * S, S * S - P, S * S + 2 * P, 2 * P] };
-    } },
-    { id: "b_alg_dispari", gen: function () {
-      var n = randInt(10, 40), ans = n * n, last = 2 * n - 1;
-      return { text: "Quanto vale la somma dei primi " + n + " numeri dispari, cioè \\(1 + 3 + 5 + \\cdots + " + last + "\\)?",
-        answer: ans,
-        hints: ["Prova con pochi termini: \\(1, 1+3=4, 1+3+5=9\\)... riconosci una successione?",
-          "La somma dei primi \\(n\\) dispari è \\(n^2\\)."],
-        solution: "La somma dei primi \\(n\\) numeri dispari vale \\(n^2\\); per \\(n=" + n + "\\) è \\(" + ans + "\\).",
-        distractors: [n * (n - 1), n * (n + 1), last, (n - 1) * (n - 1)] };
-    } }
-  ];
+/* ===== BASE — Algebra e logica ===== */
+GEN.base["Algebra e logica"] = [
+  { id: "b_alg_gauss", gen: function () {
+    var n = randInt(20, 100), ans = n * (n + 1) / 2;
+    return {
+      text: "Quanto vale la somma \\(1 + 2 + 3 + \\cdots + " + n + "\\)?",
+      answer: ans,
+      hints: ["Accoppia il primo con l'ultimo, il secondo con il penultimo: ogni coppia dà lo stesso totale.",
+        "\\(1+2+\\cdots+n = \\dfrac{n(n+1)}{2}\\)."],
+      solution: "\\(1+2+\\cdots+" + n + " = \\dfrac{" + n + "\\cdot " + (n + 1) + "}{2} = " + ans + "\\).",
+      distractors: [n * (n + 1), n * (n - 1) / 2, n * n, ans + n]
+    };
+  } },
+  { id: "b_alg_sommaquad", gen: function () {
+    var a = randInt(2, 12), b = randInt(2, 12), S = a + b, P = a * b, ans = S * S - 2 * P;
+    return {
+      text: "Due numeri hanno somma " + S + " e prodotto " + P + ". Quanto vale la somma dei loro quadrati?",
+      answer: ans,
+      hints: ["Ricorda \\((a+b)^2 = a^2 + 2ab + b^2\\).",
+        "Quindi \\(a^2+b^2 = (a+b)^2 - 2ab\\)."],
+      solution: "\\(a^2+b^2 = (a+b)^2 - 2ab = " + S + "^2 - 2\\cdot " + P + " = " + (S * S) + " - " + (2 * P) + " = " + ans + "\\).",
+      distractors: [S * S, S * S - P, S * S + 2 * P, 2 * P]
+    };
+  } },
+  { id: "b_alg_dispari", gen: function () {
+    var n = randInt(10, 40), ans = n * n, last = 2 * n - 1;
+    return {
+      text: "Quanto vale la somma dei primi " + n + " numeri dispari, cioè \\(1 + 3 + 5 + \\cdots + " + last + "\\)?",
+      answer: ans,
+      hints: ["Prova con pochi termini: \\(1, 1+3=4, 1+3+5=9\\)... riconosci una successione?",
+        "La somma dei primi \\(n\\) dispari è \\(n^2\\)."],
+      solution: "La somma dei primi \\(n\\) numeri dispari vale \\(n^2\\); per \\(n=" + n + "\\) è \\(" + ans + "\\).",
+      distractors: [n * (n - 1), n * (n + 1), last, (n - 1) * (n - 1)]
+    };
+  } }
+];
 
-  GEN.avanzato["Teoria dei numeri"] = [
-    { id: "a_tdn_legendre", gen: function () {
-      var p = choice([2, 3, 5]), n = randInt(30, 120), ans = legendre(n, p);
-      var terms = [], q = p; while (q <= n) { terms.push(Math.floor(n / q)); q *= p; }
-      return { text: "Qual è il massimo esponente \\(k\\) tale che \\(" + p + "^{k}\\) divide \\(" + n + "!\\)?",
-        answer: ans,
-        hints: ["Conta quanti fattori \\(" + p + "\\) compaiono in \\(" + n + "!\\): prima i multipli di \\(" + p + "\\), poi di \\(" + p + "^2\\)...",
-          "Formula di Legendre: \\(\\sum_{i\\ge 1}\\left\\lfloor " + n + "/" + p + "^{i}\\right\\rfloor\\)."],
-        solution: "Per Legendre, l'esponente è \\(\\left\\lfloor " + n + "/" + p + "\\right\\rfloor + \\left\\lfloor " + n + "/" + p + "^2\\right\\rfloor + \\cdots = " + terms.join(" + ") + " = " + ans + "\\).",
-        distractors: [Math.floor(n / p), ans + 1, ans - 1, Math.floor(n / p) + Math.floor(n / (p * p)) - 1, ans + 2] };
-    } },
-    { id: "a_tdn_fermat", gen: function () {
-      var p = choice([7, 11, 13]), a = randInt(2, p - 1), n = randInt(50, 400), ans = modpow(a, n, p);
-      var e = n % (p - 1);
-      return { text: "Qual è il resto della divisione di \\(" + a + "^{" + n + "}\\) per \\(" + p + "\\)?",
-        answer: ans,
-        hints: ["\\(" + p + "\\) è primo e non divide \\(" + a + "\\): usa il piccolo teorema di Fermat, \\(" + a + "^{" + (p - 1) + "} \\equiv 1 \\pmod{" + p + "}\\).",
-          "Riduci l'esponente modulo \\(" + (p - 1) + "\\): \\(" + n + " \\equiv " + e + " \\pmod{" + (p - 1) + "}\\)."],
-        solution: "Per Fermat \\(" + a + "^{" + (p - 1) + "} \\equiv 1 \\pmod{" + p + "}\\). Poiché \\(" + n + " \\equiv " + e + " \\pmod{" + (p - 1) + "}\\), si ha \\(" + a + "^{" + n + "} \\equiv " + a + "^{" + e + "} \\equiv " + ans + " \\pmod{" + p + "}\\).",
-        distractors: (function () { var r = []; for (var d = 0; d < p; d++) if (d !== ans) r.push(d); return shuffle(r); })() };
-    } },
-    { id: "a_tdn_crt", gen: function () {
-      var a = choice([3, 4, 5]);
-      var bs = [5, 6, 7, 8, 9].filter(function (x) { return gcd(x, a) === 1; });
-      var b = choice(bs), r1 = randInt(1, a - 1), r2 = randInt(1, b - 1);
-      var x = 1; while (!(x % a === r1 && x % b === r2)) x++;
-      return { text: "Qual è il più piccolo intero positivo che diviso per " + a + " dà resto " + r1 + " e diviso per " + b + " dà resto " + r2 + "?",
-        answer: x,
-        hints: ["Elenca i numeri che danno resto " + r1 + " diviso " + a + ": \\(" + r1 + ", " + (r1 + a) + ", " + (r1 + 2 * a) + ", \\dots\\)",
-          "Tra questi cerca il primo che diviso " + b + " dà resto " + r2 + " (teorema cinese del resto)."],
-        solution: "Le soluzioni di \\(x \\equiv " + r1 + " \\pmod{" + a + "}\\) e \\(x \\equiv " + r2 + " \\pmod{" + b + "}\\) sono uniche modulo \\(" + (a * b) + "\\); la più piccola positiva è \\(x = " + x + "\\).",
-        distractors: [x + a, x + b, x + 1, (x - 1 > 0 ? x - 1 : x + a * b), x + a * b] };
-    } }
-  ];
+/* ===== AVANZATO — Teoria dei numeri ===== */
+GEN.avanzato["Teoria dei numeri"] = [
+  { id: "a_tdn_legendre", gen: function () {
+    var p = choice([2, 3, 5]), n = randInt(30, 120), ans = legendre(n, p);
+    var terms = [], q = p; while (q <= n) { terms.push(Math.floor(n / q)); q *= p; }
+    return {
+      text: "Qual è il massimo esponente \\(k\\) tale che \\(" + p + "^{k}\\) divide \\(" + n + "!\\)?",
+      answer: ans,
+      hints: ["Conta quanti fattori \\(" + p + "\\) compaiono in \\(" + n + "!\\): prima i multipli di \\(" + p + "\\), poi di \\(" + p + "^2\\)...",
+        "Formula di Legendre: \\(\\sum_{i\\ge 1}\\left\\lfloor " + n + "/" + p + "^{i}\\right\\rfloor\\)."],
+      solution: "Per Legendre, l'esponente è \\(\\left\\lfloor " + n + "/" + p + "\\right\\rfloor + \\left\\lfloor " + n + "/" + p + "^2\\right\\rfloor + \\cdots = " + terms.join(" + ") + " = " + ans + "\\).",
+      distractors: [Math.floor(n / p), ans + 1, ans - 1, Math.floor(n / p) + Math.floor(n / (p * p)) - 1, ans + 2]
+    };
+  } },
+  { id: "a_tdn_fermat", gen: function () {
+    var p = choice([7, 11, 13]), a = randInt(2, p - 1), n = randInt(50, 400), ans = modpow(a, n, p);
+    var e = n % (p - 1);
+    return {
+      text: "Qual è il resto della divisione di \\(" + a + "^{" + n + "}\\) per \\(" + p + "\\)?",
+      answer: ans,
+      hints: ["\\(" + p + "\\) è primo e non divide \\(" + a + "\\): usa il piccolo teorema di Fermat, \\(" + a + "^{" + (p - 1) + "} \\equiv 1 \\pmod{" + p + "}\\).",
+        "Riduci l'esponente modulo \\(" + (p - 1) + "\\): \\(" + n + " \\equiv " + e + " \\pmod{" + (p - 1) + "}\\)."],
+      solution: "Per Fermat \\(" + a + "^{" + (p - 1) + "} \\equiv 1 \\pmod{" + p + "}\\). Poiché \\(" + n + " \\equiv " + e + " \\pmod{" + (p - 1) + "}\\), si ha \\(" + a + "^{" + n + "} \\equiv " + a + "^{" + e + "} \\equiv " + ans + " \\pmod{" + p + "}\\).",
+      distractors: (function () { var r = []; for (var d = 0; d < p; d++) if (d !== ans) r.push(d); return shuffle(r); })()
+    };
+  } },
+  { id: "a_tdn_crt", gen: function () {
+    var a = choice([3, 4, 5]);
+    var bs = [5, 6, 7, 8, 9].filter(function (x) { return gcd(x, a) === 1; });
+    var b = choice(bs), r1 = randInt(1, a - 1), r2 = randInt(1, b - 1);
+    var x = 1; while (!(x % a === r1 && x % b === r2)) x++;
+    return {
+      text: "Qual è il più piccolo intero positivo che diviso per " + a + " dà resto " + r1 + " e diviso per " + b + " dà resto " + r2 + "?",
+      answer: x,
+      hints: ["Elenca i numeri che danno resto " + r1 + " diviso " + a + ": \\(" + r1 + ", " + (r1 + a) + ", " + (r1 + 2 * a) + ", \\dots\\)",
+        "Tra questi cerca il primo che diviso " + b + " dà resto " + r2 + " (teorema cinese del resto)."],
+      solution: "Le soluzioni di \\(x \\equiv " + r1 + " \\pmod{" + a + "}\\) e \\(x \\equiv " + r2 + " \\pmod{" + b + "}\\) sono uniche modulo \\(" + (a * b) + "\\); la più piccola positiva è \\(x = " + x + "\\) (infatti \\(" + x + " = " + a + "\\cdot " + Math.floor(x / a) + " + " + r1 + "\\) e \\(" + x + " = " + b + "\\cdot " + Math.floor(x / b) + " + " + r2 + "\\)).",
+      distractors: [x + a, x + b, x + 1, (x - 1 > 0 ? x - 1 : x + a * b), x + a * b]
+    };
+  } }
+];
 
-  GEN.avanzato["Combinatoria e probabilità"] = [
-    { id: "a_comb_anagrammi", gen: function () {
-      var w = choice(["MELE", "OSSO", "PALLA", "MAMMA", "PIZZA", "TETTO", "ANANAS", "LETTERA", "COCCO", "AULA"]);
-      var counts = {}; for (var i = 0; i < w.length; i++) counts[w[i]] = (counts[w[i]] || 0) + 1;
-      var den = 1, parts = []; for (var c in counts) { den *= fact(counts[c]); if (counts[c] > 1) parts.push(counts[c] + "!"); }
-      var ans = fact(w.length) / den;
-      return { text: "Quanti anagrammi distinti (anche privi di senso) si possono formare con le lettere della parola " + w + "?",
-        answer: ans,
-        hints: ["Se tutte le lettere fossero diverse sarebbero \\(" + w.length + "!\\); ma alcune lettere si ripetono.",
-          "Dividi per il fattoriale delle molteplicità: \\(\\dfrac{" + w.length + "!}{" + (parts.length ? parts.join("\\cdot ") : "1") + "}\\)."],
-        solution: "Anagrammi \\(= \\dfrac{" + w.length + "!}{" + (parts.length ? parts.join("\\cdot ") : "1") + "} = \\dfrac{" + fact(w.length) + "}{" + den + "} = " + ans + "\\).",
-        distractors: [fact(w.length), ans * 2, Math.round(ans / 2), fact(w.length) / 2, ans + w.length] };
-    } },
-    { id: "a_comb_percorsi", gen: function () {
-      var a = randInt(3, 6), b = randInt(3, 6), ans = nCr(a + b, a);
-      return { text: "Su una griglia, quanti percorsi minimi portano da \\((0,0)\\) a \\((" + a + "," + b + ")\\) muovendosi solo di un passo verso destra o verso l'alto?",
-        answer: ans,
-        hints: ["Ogni percorso è una sequenza di " + a + " passi a destra (D) e " + b + " passi in alto (A).",
-          "Basta scegliere le posizioni dei passi D tra i \\(" + (a + b) + "\\) totali: \\(\\binom{" + (a + b) + "}{" + a + "}\\)."],
-        solution: "Un percorso è un anagramma di " + a + " D e " + b + " A: \\(\\binom{" + (a + b) + "}{" + a + "} = " + ans + "\\).",
-        distractors: [nCr(a + b, a - 1), Math.pow(2, a + b), a * b, ans + a + b] };
-    } },
-    { id: "a_comb_scelte", gen: function () {
-      var n = randInt(6, 10), k = randInt(2, 4), ans = nCr(n, k);
-      return { text: "In quanti modi si può scegliere una squadra di " + k + " persone da un gruppo di " + n + " (l'ordine non conta)?",
-        answer: ans,
-        hints: ["L'ordine non conta: è una combinazione, non una disposizione.",
-          "\\(\\binom{" + n + "}{" + k + "} = \\dfrac{" + n + "!}{" + k + "!\\,(" + n + "-" + k + ")!}\\)."],
-        solution: "\\(\\binom{" + n + "}{" + k + "} = " + ans + "\\).",
-        distractors: [ans * fact(k), nCr(n, k - 1), Math.pow(n, k), ans + k] };
-    } }
-  ];
+/* ===== AVANZATO — Combinatoria e probabilità ===== */
+GEN.avanzato["Combinatoria e probabilità"] = [
+  { id: "a_comb_anagrammi", gen: function () {
+    var w = choice(["MELE", "OSSO", "PALLA", "MAMMA", "PIZZA", "TETTO", "ANANAS", "LETTERA", "COCCO", "AULA"]);
+    var counts = {}; for (var i = 0; i < w.length; i++) counts[w[i]] = (counts[w[i]] || 0) + 1;
+    var den = 1, parts = []; for (var c in counts) { den *= fact(counts[c]); if (counts[c] > 1) parts.push(counts[c] + "!"); }
+    var ans = fact(w.length) / den;
+    return {
+      text: "Quanti anagrammi distinti (anche privi di senso) si possono formare con le lettere della parola " + w + "?",
+      answer: ans,
+      hints: ["Se tutte le lettere fossero diverse sarebbero \\(" + w.length + "!\\); ma alcune lettere si ripetono.",
+        "Dividi per il fattoriale delle molteplicità: \\(\\dfrac{" + w.length + "!}{" + (parts.length ? parts.join("\\cdot ") : "1") + "}\\)."],
+      solution: "Anagrammi \\(= \\dfrac{" + w.length + "!}{" + (parts.length ? parts.join("\\cdot ") : "1") + "} = \\dfrac{" + fact(w.length) + "}{" + den + "} = " + ans + "\\).",
+      distractors: [fact(w.length), ans * 2, Math.round(ans / 2), fact(w.length) / 2, ans + w.length]
+    };
+  } },
+  { id: "a_comb_percorsi", gen: function () {
+    var a = randInt(3, 6), b = randInt(3, 6), ans = nCr(a + b, a);
+    return {
+      text: "Su una griglia, quanti percorsi minimi portano da \\((0,0)\\) a \\((" + a + "," + b + ")\\) muovendosi solo di un passo verso destra o verso l'alto?",
+      answer: ans,
+      hints: ["Ogni percorso è una sequenza di " + a + " passi a destra (D) e " + b + " passi in alto (A).",
+        "Basta scegliere le posizioni dei passi D tra i \\(" + (a + b) + "\\) totali: \\(\\binom{" + (a + b) + "}{" + a + "}\\)."],
+      solution: "Un percorso è un'anagramma di " + a + " D e " + b + " A: \\(\\binom{" + (a + b) + "}{" + a + "} = " + ans + "\\).",
+      distractors: [nCr(a + b, a - 1), Math.pow(2, a + b), a * b, ans + a + b]
+    };
+  } },
+  { id: "a_comb_scelte", gen: function () {
+    var n = randInt(6, 10), k = randInt(2, 4), ans = nCr(n, k);
+    return {
+      text: "In quanti modi si può scegliere una squadra di " + k + " persone da un gruppo di " + n + " (l'ordine non conta)?",
+      answer: ans,
+      hints: ["L'ordine non conta: è una combinazione, non una disposizione.",
+        "\\(\\binom{" + n + "}{" + k + "} = \\dfrac{" + n + "!}{" + k + "!\\,(" + n + "-" + k + ")!}\\)."],
+      solution: "\\(\\binom{" + n + "}{" + k + "} = " + ans + "\\).",
+      distractors: [ans * fact(k), nCr(n, k - 1), Math.pow(n, k), ans + k]
+    };
+  } }
+];
 
-  var HERON = [[13, 14, 15, 84], [5, 12, 13, 30], [9, 10, 17, 36], [3, 25, 26, 36], [7, 15, 20, 42],
-    [10, 13, 13, 60], [8, 15, 17, 60], [6, 25, 29, 60], [11, 13, 20, 66], [13, 20, 21, 126],
-    [9, 12, 15, 54], [10, 17, 21, 84]];
-  GEN.avanzato["Geometria"] = [
-    { id: "a_geo_erone", gen: function () {
-      var tr = choice(HERON), a = tr[0], b = tr[1], c = tr[2], ans = tr[3], s = (a + b + c) / 2;
-      return { text: "Un triangolo ha i lati lunghi " + a + ", " + b + " e " + c + ". Qual è la sua area?",
-        answer: ans,
-        hints: ["Conosci i tre lati: usa la formula di Erone.",
-          "Semiperimetro \\(s = \\dfrac{" + a + "+" + b + "+" + c + "}{2} = " + s + "\\); poi \\(A = \\sqrt{s(s-a)(s-b)(s-c)}\\)."],
-        solution: "Con Erone, \\(s = " + s + "\\) e \\(A = \\sqrt{" + s + "\\cdot " + (s - a) + "\\cdot " + (s - b) + "\\cdot " + (s - c) + "} = \\sqrt{" + (s * (s - a) * (s - b) * (s - c)) + "} = " + ans + "\\).",
-        distractors: [a + b + c, ans + 2, ans - 2, s, Math.round(a * b / 2)] };
-    } },
-    { id: "a_geo_shoelace", gen: function () {
-      var A, B, C, area2;
-      do {
-        A = [randInt(-6, 6), randInt(-6, 6)]; B = [randInt(-6, 6), randInt(-6, 6)]; C = [randInt(-6, 6), randInt(-6, 6)];
-        area2 = Math.abs(A[0] * (B[1] - C[1]) + B[0] * (C[1] - A[1]) + C[0] * (A[1] - B[1]));
-      } while (area2 === 0 || area2 % 2 !== 0);
-      var ans = area2 / 2;
-      function pt(P) { return "(" + P[0] + "," + P[1] + ")"; }
-      return { text: "Nel piano cartesiano un triangolo ha vertici \\(A" + pt(A) + "\\), \\(B" + pt(B) + "\\) e \\(C" + pt(C) + "\\). Qual è la sua area?",
-        answer: ans,
-        hints: ["Usa la formula dell'area con le coordinate (formula di Gauss, detta anche shoelace).",
-          "\\(A = \\tfrac12\\left|x_A(y_B-y_C) + x_B(y_C-y_A) + x_C(y_A-y_B)\\right|\\)."],
-        solution: "Con la formula di Gauss, \\(A = \\tfrac12\\left|x_A(y_B-y_C)+x_B(y_C-y_A)+x_C(y_A-y_B)\\right| = \\tfrac12\\cdot " + area2 + " = " + ans + "\\).",
-        distractors: [area2, ans + 1, ans - 1, ans + 2] };
-    } },
-    { id: "a_geo_angolo", gen: function () {
-      var n = choice([5, 6, 8, 9, 10, 12, 15, 18, 20]), ans = (n - 2) * 180 / n;
-      return { text: "Quanto misura ciascun angolo interno di un poligono regolare di " + n + " lati (in gradi)?",
-        answer: ans,
-        hints: ["La somma degli angoli interni è \\((n-2)\\cdot 180^\\circ\\); dividila per il numero di angoli.",
-          "Angolo interno \\(= \\dfrac{(n-2)\\cdot 180^\\circ}{n}\\)."],
-        solution: "Angolo interno \\(= \\dfrac{(" + n + "-2)\\cdot 180}{" + n + "} = \\dfrac{" + ((n - 2) * 180) + "}{" + n + "} = " + ans + "\\) gradi.",
-        distractors: [360 / n, (n - 2) * 180, 180 - ans, ans + 2] };
-    } }
-  ];
+/* ===== AVANZATO — Geometria ===== */
+var HERON = [[13, 14, 15, 84], [5, 12, 13, 30], [9, 10, 17, 36], [3, 25, 26, 36], [7, 15, 20, 42],
+  [10, 13, 13, 60], [8, 15, 17, 60], [6, 25, 29, 60], [11, 13, 20, 66], [13, 20, 21, 126],
+  [9, 12, 15, 54], [10, 17, 21, 84]];
+GEN.avanzato["Geometria"] = [
+  { id: "a_geo_erone", gen: function () {
+    var tr = choice(HERON), a = tr[0], b = tr[1], c = tr[2], ans = tr[3], s = (a + b + c) / 2;
+    return {
+      text: "Un triangolo ha i lati lunghi " + a + ", " + b + " e " + c + ". Qual è la sua area?",
+      answer: ans,
+      hints: ["Conosci i tre lati: usa la formula di Erone.",
+        "Semiperimetro \\(s = \\dfrac{" + a + "+" + b + "+" + c + "}{2} = " + s + "\\); poi \\(A = \\sqrt{s(s-a)(s-b)(s-c)}\\)."],
+      solution: "Con Erone, \\(s = " + s + "\\) e \\(A = \\sqrt{" + s + "\\cdot " + (s - a) + "\\cdot " + (s - b) + "\\cdot " + (s - c) + "} = \\sqrt{" + (s * (s - a) * (s - b) * (s - c)) + "} = " + ans + "\\).",
+      distractors: [a + b + c, ans + 2, ans - 2, s, Math.round(a * b / 2)]
+    };
+  } },
+  { id: "a_geo_shoelace", gen: function () {
+    var A, B, C, area2;
+    do {
+      A = [randInt(-6, 6), randInt(-6, 6)]; B = [randInt(-6, 6), randInt(-6, 6)]; C = [randInt(-6, 6), randInt(-6, 6)];
+      area2 = Math.abs(A[0] * (B[1] - C[1]) + B[0] * (C[1] - A[1]) + C[0] * (A[1] - B[1]));
+    } while (area2 === 0 || area2 % 2 !== 0);
+    var ans = area2 / 2;
+    function pt(P) { return "(" + P[0] + "," + P[1] + ")"; }
+    return {
+      text: "Nel piano cartesiano un triangolo ha vertici \\(A" + pt(A) + "\\), \\(B" + pt(B) + "\\) e \\(C" + pt(C) + "\\). Qual è la sua area?",
+      answer: ans,
+      hints: ["Usa la formula dell'area con le coordinate (formula di Gauss / shoelace).",
+        "\\(A = \\tfrac12\\left|x_A(y_B-y_C) + x_B(y_C-y_A) + x_C(y_A-y_B)\\right|\\)."],
+      solution: "Con la formula di Gauss, \\(A = \\tfrac12\\left|x_A(y_B-y_C)+x_B(y_C-y_A)+x_C(y_A-y_B)\\right| = \\tfrac12\\cdot " + area2 + " = " + ans + "\\).",
+      distractors: [area2, ans + 1, ans - 1, ans + 2]
+    };
+  } },
+  { id: "a_geo_angolo", gen: function () {
+    var n = choice([5, 6, 8, 9, 10, 12, 15, 18, 20]), ans = (n - 2) * 180 / n;
+    return {
+      text: "Quanto misura ciascun angolo interno di un poligono regolare di " + n + " lati (in gradi)?",
+      answer: ans,
+      hints: ["La somma degli angoli interni è \\((n-2)\\cdot 180^\\circ\\); dividila per il numero di angoli.",
+        "Angolo interno \\(= \\dfrac{(n-2)\\cdot 180^\\circ}{n}\\)."],
+      solution: "Angolo interno \\(= \\dfrac{(" + n + "-2)\\cdot 180}{" + n + "} = \\dfrac{" + ((n - 2) * 180) + "}{" + n + "} = " + ans + "\\) gradi.",
+      distractors: [360 / n, (n - 2) * 180, 180 - ans, ans + 2]
+    };
+  } }
+];
 
-  GEN.avanzato["Algebra e logica"] = [
-    { id: "a_alg_vieta", gen: function () {
-      var r1 = randInt(1, 9), r2 = randInt(1, 9), S = r1 + r2, P = r1 * r2, ans = r1 * r1 + r2 * r2;
-      return { text: "Le radici dell'equazione \\(x^2 - " + S + "x + " + P + " = 0\\) sono due numeri. Quanto vale la somma dei loro quadrati?",
-        answer: ans,
-        hints: ["Per le formule di Viète, se le radici sono \\(r_1, r_2\\) allora \\(r_1+r_2 = " + S + "\\) e \\(r_1 r_2 = " + P + "\\).",
-          "Usa \\(r_1^2 + r_2^2 = (r_1+r_2)^2 - 2 r_1 r_2\\)."],
-        solution: "\\(r_1^2+r_2^2 = (r_1+r_2)^2 - 2 r_1 r_2 = " + S + "^2 - 2\\cdot " + P + " = " + (S * S) + " - " + (2 * P) + " = " + ans + "\\).",
-        distractors: [S * S, S * S - P, 2 * P, S * S + 2 * P] };
-    } },
-    { id: "a_alg_cubo", gen: function () {
-      var k = randInt(3, 9), ans = k * k * k - 3 * k;
-      return { text: "Sapendo che \\(x + \\dfrac{1}{x} = " + k + "\\), quanto vale \\(x^3 + \\dfrac{1}{x^3}\\)?",
-        answer: ans,
-        hints: ["Eleva al cubo: \\(\\left(x+\\tfrac1x\\right)^3 = x^3 + \\tfrac1{x^3} + 3\\left(x+\\tfrac1x\\right)\\).",
-          "Quindi \\(x^3+\\tfrac1{x^3} = k^3 - 3k\\) con \\(k = " + k + "\\)."],
-        solution: "\\(x^3+\\dfrac1{x^3} = \\left(x+\\tfrac1x\\right)^3 - 3\\left(x+\\tfrac1x\\right) = " + k + "^3 - 3\\cdot " + k + " = " + (k * k * k) + " - " + (3 * k) + " = " + ans + "\\).",
-        distractors: [k * k * k, k * k * k - 3, k * k * k - 2 * k, (k * k - 2) * k] };
-    } },
-    { id: "a_alg_geom", gen: function () {
-      var n = randInt(6, 12), ans = Math.pow(2, n + 1) - 1;
-      return { text: "Quanto vale la somma \\(1 + 2 + 4 + 8 + \\cdots + 2^{" + n + "}\\)?",
-        answer: ans,
-        hints: ["È una progressione geometrica di ragione 2.",
-          "\\(1 + 2 + \\cdots + 2^{n} = 2^{\\,n+1} - 1\\)."],
-        solution: "\\(\\sum_{i=0}^{" + n + "} 2^{i} = 2^{" + (n + 1) + "} - 1 = " + Math.pow(2, n + 1) + " - 1 = " + ans + "\\).",
-        distractors: [Math.pow(2, n), Math.pow(2, n + 1), Math.pow(2, n) - 1, Math.pow(2, n + 1) + 1] };
-    } }
-  ];
+/* ===== AVANZATO — Algebra e logica ===== */
+GEN.avanzato["Algebra e logica"] = [
+  { id: "a_alg_vieta", gen: function () {
+    var r1 = randInt(1, 9), r2 = randInt(1, 9), S = r1 + r2, P = r1 * r2, ans = r1 * r1 + r2 * r2;
+    return {
+      text: "Le radici dell'equazione \\(x^2 - " + S + "x + " + P + " = 0\\) sono due numeri. Quanto vale la somma dei loro quadrati?",
+      answer: ans,
+      hints: ["Per le formule di Viète, se le radici sono \\(r_1, r_2\\) allora \\(r_1+r_2 = " + S + "\\) e \\(r_1 r_2 = " + P + "\\).",
+        "Usa \\(r_1^2 + r_2^2 = (r_1+r_2)^2 - 2 r_1 r_2\\)."],
+      solution: "\\(r_1^2+r_2^2 = (r_1+r_2)^2 - 2 r_1 r_2 = " + S + "^2 - 2\\cdot " + P + " = " + (S * S) + " - " + (2 * P) + " = " + ans + "\\).",
+      distractors: [S * S, S * S - P, 2 * P, S * S + 2 * P]
+    };
+  } },
+  { id: "a_alg_cubo", gen: function () {
+    var k = randInt(3, 9), ans = k * k * k - 3 * k;
+    return {
+      text: "Sapendo che \\(x + \\dfrac{1}{x} = " + k + "\\), quanto vale \\(x^3 + \\dfrac{1}{x^3}\\)?",
+      answer: ans,
+      hints: ["Eleva al cubo: \\(\\left(x+\\tfrac1x\\right)^3 = x^3 + \\tfrac1{x^3} + 3\\left(x+\\tfrac1x\\right)\\).",
+        "Quindi \\(x^3+\\tfrac1{x^3} = k^3 - 3k\\) con \\(k = " + k + "\\)."],
+      solution: "\\(x^3+\\dfrac1{x^3} = \\left(x+\\tfrac1x\\right)^3 - 3\\left(x+\\tfrac1x\\right) = " + k + "^3 - 3\\cdot " + k + " = " + (k * k * k) + " - " + (3 * k) + " = " + ans + "\\).",
+      distractors: [k * k * k, k * k * k - 3, k * k * k - 2 * k, (k * k - 2) * k]
+    };
+  } },
+  { id: "a_alg_geom", gen: function () {
+    var n = randInt(6, 12), ans = Math.pow(2, n + 1) - 1;
+    return {
+      text: "Quanto vale la somma \\(1 + 2 + 4 + 8 + \\cdots + 2^{" + n + "}\\)?",
+      answer: ans,
+      hints: ["È una progressione geometrica di ragione 2.",
+        "\\(1 + 2 + \\cdots + 2^{n} = 2^{\\,n+1} - 1\\)."],
+      solution: "\\(\\sum_{i=0}^{" + n + "} 2^{i} = 2^{" + (n + 1) + "} - 1 = " + Math.pow(2, n + 1) + " - 1 = " + ans + "\\).",
+      distractors: [Math.pow(2, n), Math.pow(2, n + 1), Math.pow(2, n) - 1, Math.pow(2, n + 1) + 1]
+    };
+  } }
+];
 
-  var CONCEPT = { base: {}, avanzato: {} };
-  CONCEPT.base["Teoria dei numeri"] = { id: "c_b_tdn", make: function () {
-    return { q: "Quante cifre ha il numero \\(2^{10}\\cdot 5^{8}\\)?", options: ["8", "9", "10", "11", "18"], correct: 1,
-      exp: "\\(2^{10}\\cdot 5^8 = 2^2\\cdot(2^8\\cdot 5^8) = 4\\cdot 10^8 = 400\\,000\\,000\\): ha 9 cifre." }; } };
-  CONCEPT.base["Combinatoria e probabilità"] = { id: "c_b_comb", make: function () {
-    return { q: "Qual è il numero minimo di persone che garantisce che almeno due siano nate nello stesso mese?", options: ["12", "13", "24", "2", "23"], correct: 1,
-      exp: "I mesi (cassetti) sono 12: con 13 persone, per il principio dei cassetti, due cadono nello stesso mese." }; } };
-  CONCEPT.base["Geometria"] = { id: "c_b_geo", make: function () {
-    return { q: "Se il raggio di un cerchio raddoppia, di quante volte aumenta la sua area?", options: ["2", "3", "4", "8", "16"], correct: 2,
-      exp: "L'area è \\(\\pi r^2\\): con \\(2r\\) diventa \\(\\pi(2r)^2 = 4\\pi r^2\\), cioè 4 volte." }; } };
-  CONCEPT.base["Algebra e logica"] = { id: "c_b_alg", make: function () {
-    return { q: "Cinque bicchieri sono tutti capovolti. A ogni mossa se ne rovesciano esattamente due. È possibile averli tutti dritti?", options: ["Sì, in 3 mosse", "Sì, in 5 mosse", "No, è impossibile", "Sì, in 10 mosse", "Solo con 4 bicchieri"], correct: 2,
-      exp: "Il numero di bicchieri dritti parte da 0 (pari) e ogni mossa lo cambia di \\(+2, 0\\) o \\(-2\\): resta pari. Cinque è dispari, quindi impossibile." }; } };
-  CONCEPT.avanzato["Teoria dei numeri"] = { id: "c_a_tdn", make: function () {
-    var p = choice([7, 11, 13]);
-    return { q: "Se \\(p = " + p + "\\) e \\(a\\) non è multiplo di \\(p\\), quanto vale \\(a^{" + (p - 1) + "} \\bmod " + p + "\\)?", options: ["0", "1", "a", "" + (p - 1), "a-1"], correct: 1,
-      exp: "Per il piccolo teorema di Fermat, se \\(p\\) è primo e \\(p \\nmid a\\), allora \\(a^{p-1} \\equiv 1 \\pmod p\\)." }; } };
-  CONCEPT.avanzato["Combinatoria e probabilità"] = { id: "c_a_comb", make: function () {
-    var n = choice([5, 6]); var ans = fact(n - 1);
-    return { q: "In quanti modi si possono sedere " + n + " persone attorno a un tavolo rotondo (rotazioni equivalenti)?", options: [String(fact(n)), String(ans), String(n * n), String(fact(n - 2)), String(n)], correct: 1,
-      exp: "Fissata una persona per eliminare le rotazioni, le altre si dispongono in \\((" + n + "-1)! = " + ans + "\\) modi." }; } };
-  CONCEPT.avanzato["Geometria"] = { id: "c_a_geo", make: function () {
-    var k = choice([2, 3, 4]);
-    return { q: "Due triangoli sono simili con rapporto di similitudine \\(" + k + "\\). Qual è il rapporto tra le loro aree?", options: [String(k), String(k * k), String(k * k * k), String(2 * k), String(k + 2)], correct: 1,
-      exp: "Nelle figure simili le aree stanno come il quadrato del rapporto: \\(" + k + "^2 = " + (k * k) + "\\)." }; } };
-  CONCEPT.avanzato["Algebra e logica"] = { id: "c_a_alg", make: function () {
-    return { q: "Quante soluzioni reali ha l'equazione \\(x^2 + 1 = 0\\)?", options: ["0", "1", "2", "infinite", "-1"], correct: 0,
-      exp: "\\(x^2 \\ge 0\\) per ogni reale, quindi \\(x^2+1 \\ge 1 > 0\\): nessuna soluzione reale (discriminante negativo)." }; } };
+/* ---------- domande concettuali (solo quiz) : make() -> {q, options[], correct, exp} ---------- */
+/* ===== ESPERTO — Teoria dei numeri ===== */
+GEN.esperto["Teoria dei numeri"] = [
+  { id: "e_tdn_mod100", gen: function () {
+    var a = choice([2, 3, 4, 6, 7, 8, 9, 12, 13, 14]), n = randInt(30, 300), ans = modpow(a, n, 100);
+    return { text: "Qual è il resto della divisione di \\(" + a + "^{" + n + "}\\) per \\(100\\) (cioè le sue ultime due cifre)?",
+      answer: ans,
+      hints: ["Le ultime due cifre delle potenze di " + a + " sono periodiche: cerca il periodo modulo 100.",
+        "Le potenze modulo 100 si ripetono con periodo che divide 20 (\\(\\lambda(100)=20\\)); riduci l'esponente."],
+      solution: "Le ultime due cifre di \\(" + a + "^k\\) sono periodiche modulo 100 (periodo divisore di 20). Calcolando \\(" + a + "^{" + n + "}\\bmod 100\\) si ottiene \\(" + ans + "\\).",
+      distractors: [modpow(a, n, 10), (ans + 1) % 100, (ans + 10) % 100, (ans + 50) % 100, (ans + 25) % 100] };
+  } },
+  { id: "e_tdn_3primi", gen: function () {
+    var pr = sample([2, 3, 5, 7], 3).sort(function (x, y) { return x - y; });
+    var p = pr[0], q = pr[1], r = pr[2], e1 = randInt(1, 3), e2 = randInt(1, 2), e3 = 1;
+    var N = Math.pow(p, e1) * Math.pow(q, e2) * Math.pow(r, e3), ans = (e1 + 1) * (e2 + 1) * (e3 + 1);
+    return { text: "Quanti divisori positivi ha \\(" + N + " = " + p + "^{" + e1 + "}\\cdot " + q + "^{" + e2 + "}\\cdot " + r + "\\)?",
+      answer: ans,
+      hints: ["Con \\(N = p^{a}q^{b}r^{c}\\) ogni divisore sceglie un esponente per ciascun primo.",
+        "Il numero di divisori è \\((a+1)(b+1)(c+1)\\)."],
+      solution: "\\((a+1)(b+1)(c+1) = (" + e1 + "+1)(" + e2 + "+1)(1+1) = " + (e1 + 1) + "\\cdot " + (e2 + 1) + "\\cdot 2 = " + ans + "\\).",
+      distractors: [e1 * e2 * e3, (e1 + 1) * (e2 + 1), e1 + e2 + e3, ans + 2, ans - 2] };
+  } },
+  { id: "e_tdn_sigma", gen: function () {
+    var pr = sample([2, 3, 5], 2), p = pr[0], q = pr[1], a = randInt(1, 2), b = randInt(1, 2);
+    var sp = (Math.pow(p, a + 1) - 1) / (p - 1), sq = (Math.pow(q, b + 1) - 1) / (q - 1);
+    var N = Math.pow(p, a) * Math.pow(q, b), ans = sp * sq;
+    return { text: "Quanto vale la somma di tutti i divisori positivi di \\(" + N + " = " + p + "^{" + a + "}\\cdot " + q + "^{" + b + "}\\)?",
+      answer: ans,
+      hints: ["La somma dei divisori è moltiplicativa: \\(\\sigma(p^a q^b) = \\sigma(p^a)\\,\\sigma(q^b)\\).",
+        "\\(\\sigma(p^a) = 1 + p + \\cdots + p^{a} = \\dfrac{p^{a+1}-1}{p-1}\\)."],
+      solution: "\\(\\sigma(N) = \\dfrac{" + p + "^{" + (a + 1) + "}-1}{" + p + "-1}\\cdot \\dfrac{" + q + "^{" + (b + 1) + "}-1}{" + q + "-1} = " + sp + "\\cdot " + sq + " = " + ans + "\\).",
+      distractors: [N, ans - N, (a + 1) * (b + 1), ans + 1, ans - 1] };
+  } }
+];
 
-  function numericToQuestion(area, gnObj) {
-    var r = gnObj.gen();
-    var mo = makeOptions(r.answer, r.distractors);
-    return { area: area, q: r.text, options: mo.options, correct: mo.correct, exp: r.solution };
-  }
-  function conceptToQuestion(area, cObj) {
-    var c = cObj.make();
-    var s = shuffleQ({ options: c.options, correct: c.correct });
-    return { area: area, q: c.q, options: s.options, correct: s.correct, exp: c.exp };
-  }
-  function buildQuizPool(lvl, perArea) {
-    perArea = perArea || 3;
-    var out = [];
-    AREAS.forEach(function (area) {
-      var builders = GEN[lvl][area].map(function (g) { return function () { return numericToQuestion(area, g); }; });
-      var cpt = CONCEPT[lvl][area];
-      if (cpt) builders.push(function () { return conceptToQuestion(area, cpt); });
-      sample(builders, Math.min(perArea, builders.length)).forEach(function (b) { out.push(b()); });
-    });
-    return shuffle(out);
-  }
+/* ===== ESPERTO — Combinatoria e probabilità ===== */
+GEN.esperto["Combinatoria e probabilità"] = [
+  { id: "e_comb_derang", gen: function () {
+    var n = randInt(4, 6);
+    var D = [1, 0]; for (var i = 2; i <= n; i++) D[i] = (i - 1) * (D[i - 1] + D[i - 2]);
+    var ans = D[n];
+    return { text: n + " persone lasciano il cappello all'ingresso e lo riprendono a caso. In quanti modi può succedere che nessuno riprenda il proprio cappello?",
+      answer: ans,
+      hints: ["È il numero di permutazioni senza punti fissi (dismutazioni) di " + n + " oggetti.",
+        "Vale la ricorrenza \\(D_n = (n-1)\\,(D_{n-1} + D_{n-2})\\), con \\(D_1=0,\\ D_2=1\\)."],
+      solution: "Le dismutazioni di " + n + " oggetti sono \\(D_{" + n + "} = " + ans + "\\) (da \\(D_n=(n-1)(D_{n-1}+D_{n-2})\\)).",
+      distractors: [fact(n), fact(n) - 1, ans + 1, ans - 1, Math.round(fact(n) / 2)] };
+  } },
+  { id: "e_comb_incl", gen: function () {
+    var N = randInt(40, 150), a = choice([2, 3]), b = choice([5, 7]);
+    var ans = N - Math.floor(N / a) - Math.floor(N / b) + Math.floor(N / (a * b));
+    return { text: "Quanti interi da 1 a " + N + " non sono divisibili né per " + a + " né per " + b + "?",
+      answer: ans,
+      hints: ["Conta prima quelli divisibili per " + a + " o per " + b + " con l'inclusione-esclusione.",
+        "Divisibili per " + a + " o " + b + ": \\(\\lfloor N/" + a + "\\rfloor + \\lfloor N/" + b + "\\rfloor - \\lfloor N/" + (a * b) + "\\rfloor\\); poi sottrai dal totale."],
+      solution: "\\(" + N + " - \\lfloor " + N + "/" + a + "\\rfloor - \\lfloor " + N + "/" + b + "\\rfloor + \\lfloor " + N + "/" + (a * b) + "\\rfloor = " + N + " - " + Math.floor(N / a) + " - " + Math.floor(N / b) + " + " + Math.floor(N / (a * b)) + " = " + ans + "\\).",
+      distractors: [N - Math.floor(N / a) - Math.floor(N / b), Math.floor(N / a) + Math.floor(N / b), ans + 1, ans - 1, N - Math.floor(N / a)] };
+  } },
+  { id: "e_comb_stars", gen: function () {
+    var n = randInt(4, 8), k = randInt(2, 4), ans = nCr(n + k - 1, k - 1);
+    return { text: "In quanti modi si possono distribuire " + n + " caramelle identiche a " + k + " bambini (qualcuno può restare senza)?",
+      answer: ans,
+      hints: ["È un problema di 'stelle e sbarre': " + n + " caramelle e " + (k - 1) + " separatori.",
+        "Il numero è \\(\\binom{n+k-1}{k-1} = \\binom{" + (n + k - 1) + "}{" + (k - 1) + "}\\)."],
+      solution: "Stelle e sbarre: \\(\\binom{" + n + "+" + k + "-1}{" + k + "-1} = \\binom{" + (n + k - 1) + "}{" + (k - 1) + "} = " + ans + "\\).",
+      distractors: [nCr(n, k - 1), Math.pow(k, n), Math.pow(n, k), nCr(n + k, k), ans + 2] };
+  } }
+];
+
+/* ===== ESPERTO — Geometria ===== */
+var PYTH = [[3, 4, 5], [6, 8, 10], [5, 12, 13], [8, 15, 17], [9, 12, 15], [7, 24, 25], [20, 21, 29], [10, 24, 26], [12, 16, 20], [9, 40, 41], [12, 35, 37], [15, 20, 25]];
+GEN.esperto["Geometria"] = [
+  { id: "e_geo_pick", gen: function () {
+    var A0, B0, C0, area2, B, I;
+    do {
+      A0 = [randInt(-7, 7), randInt(-7, 7)]; B0 = [randInt(-7, 7), randInt(-7, 7)]; C0 = [randInt(-7, 7), randInt(-7, 7)];
+      area2 = Math.abs(A0[0] * (B0[1] - C0[1]) + B0[0] * (C0[1] - A0[1]) + C0[0] * (A0[1] - B0[1]));
+      B = gcd(A0[0] - B0[0], A0[1] - B0[1]) + gcd(B0[0] - C0[0], B0[1] - C0[1]) + gcd(C0[0] - A0[0], C0[1] - A0[1]);
+      I = (area2 - B + 2) / 2;
+    } while (!(area2 > 0 && I >= 1));
+    function pt(P) { return "(" + P[0] + "," + P[1] + ")"; }
+    return { text: "Nel piano cartesiano un triangolo ha vertici \\(A" + pt(A0) + "\\), \\(B" + pt(B0) + "\\) e \\(C" + pt(C0) + "\\). Quanti punti a coordinate intere cadono strettamente all'interno del triangolo?",
+      answer: I,
+      hints: ["Usa il teorema di Pick: \\(A = I + \\dfrac{B}{2} - 1\\), con \\(I\\) punti interni e \\(B\\) di bordo.",
+        "Calcola l'area \\(A\\) (formula di Gauss) e i punti di bordo \\(B\\) (somma dei \\(\\gcd\\) sui lati), poi ricava \\(I = A - \\dfrac{B}{2} + 1\\)."],
+      solution: "Area \\(A = " + (area2 / 2) + "\\), punti di bordo \\(B = " + B + "\\). Per Pick \\(I = A - \\dfrac{B}{2} + 1 = " + (area2 / 2) + " - " + (B / 2) + " + 1 = " + I + "\\).",
+      distractors: [I + B, B, I + 1, I - 1, area2 / 2] };
+  } },
+  { id: "e_geo_inradius", gen: function () {
+    var t = choice(PYTH), a = t[0], b = t[1], c = t[2], ans = (a + b - c) / 2;
+    return { text: "Un triangolo rettangolo ha i cateti " + a + " e " + b + " e l'ipotenusa " + c + ". Qual è il raggio del cerchio inscritto?",
+      answer: ans,
+      hints: ["Per un triangolo rettangolo il raggio inscritto è \\(r = \\dfrac{\\text{cateto}_1 + \\text{cateto}_2 - \\text{ipotenusa}}{2}\\).",
+        "In alternativa \\(r = \\dfrac{\\text{Area}}{s}\\) con \\(s\\) semiperimetro."],
+      solution: "\\(r = \\dfrac{" + a + " + " + b + " - " + c + "}{2} = " + ans + "\\) (coerente con \\(r = \\text{Area}/s = " + (a * b / 2) + "/" + ((a + b + c) / 2) + "\\)).",
+      distractors: [a + b - c, Math.round(c / 2), ans + 1, ans + 2, (a + b + c) / 2] };
+  } },
+  { id: "e_geo_diag", gen: function () {
+    var n = randInt(5, 9), ans = nCr(n, 4);
+    return { text: "In un poligono convesso di " + n + " lati con le diagonali in posizione generica (mai tre concorrenti), in quanti punti interni si intersecano le diagonali?",
+      answer: ans,
+      hints: ["Ogni punto di intersezione interno è individuato da una coppia di diagonali che si incrociano.",
+        "Ogni tale punto corrisponde a una scelta di 4 vertici: \\(\\binom{n}{4}\\)."],
+      solution: "Ogni intersezione interna corrisponde a 4 vertici (le due diagonali di un quadrilatero): \\(\\binom{" + n + "}{4} = " + ans + "\\).",
+      distractors: [nCr(n, 2), n * (n - 3) / 2, nCr(n, 3), ans + 1, ans - 1] };
+  } }
+];
+
+/* ===== ESPERTO — Algebra e logica ===== */
+GEN.esperto["Algebra e logica"] = [
+  { id: "e_alg_vieta3", gen: function () {
+    var r1 = randInt(1, 7), r2 = randInt(1, 7), S = r1 + r2, P = r1 * r2, ans = r1 * r1 * r1 + r2 * r2 * r2;
+    return { text: "Le radici di \\(x^2 - " + S + "x + " + P + " = 0\\) sono due numeri. Quanto vale la somma dei loro cubi?",
+      answer: ans,
+      hints: ["Con Viète \\(r_1+r_2 = " + S + "\\) e \\(r_1 r_2 = " + P + "\\).",
+        "Usa \\(r_1^3 + r_2^3 = (r_1+r_2)^3 - 3 r_1 r_2 (r_1+r_2)\\)."],
+      solution: "\\(r_1^3+r_2^3 = S^3 - 3PS = " + S + "^3 - 3\\cdot " + P + "\\cdot " + S + " = " + (S * S * S) + " - " + (3 * P * S) + " = " + ans + "\\).",
+      distractors: [S * S * S, S * S * S - P * S, S * (S * S - 2 * P), ans + 2, ans - 2] };
+  } },
+  { id: "e_alg_rec", gen: function () {
+    var c = randInt(1, 4), k = randInt(5, 11);
+    var v = c; for (var i = 1; i < k; i++) v = 2 * v + 1;
+    return { text: "Una successione ha \\(a_1 = " + c + "\\) e \\(a_{n+1} = 2a_n + 1\\). Quanto vale \\(a_{" + k + "}\\)?",
+      answer: v,
+      hints: ["Prova a sommare 1 a ogni termine: \\(a_n + 1\\) come si comporta?",
+        "\\(a_{n+1}+1 = 2(a_n+1)\\), quindi \\(a_n + 1 = (a_1+1)\\cdot 2^{\\,n-1}\\)."],
+      solution: "Da \\(a_n+1 = (a_1+1)2^{n-1}\\): \\(a_{" + k + "} = (" + c + "+1)\\cdot 2^{" + (k - 1) + "} - 1 = " + ((c + 1) * Math.pow(2, k - 1)) + " - 1 = " + v + "\\).",
+      distractors: [v + 1, (c + 1) * Math.pow(2, k - 1), Math.pow(2, k) - 1, v - 1, 2 * v + 1] };
+  } },
+  { id: "e_alg_cubi", gen: function () {
+    var n = randInt(5, 15), s = n * (n + 1) / 2, ans = s * s;
+    return { text: "Quanto vale la somma dei cubi \\(1^3 + 2^3 + 3^3 + \\cdots + " + n + "^3\\)?",
+      answer: ans,
+      hints: ["Calcola prima \\(1+2+\\cdots+" + n + " = " + s + "\\).",
+        "Vale l'identità \\(1^3+2^3+\\cdots+n^3 = \\left(\\dfrac{n(n+1)}{2}\\right)^2\\)."],
+      solution: "\\(1^3+\\cdots+" + n + "^3 = \\left(\\dfrac{" + n + "\\cdot " + (n + 1) + "}{2}\\right)^2 = " + s + "^2 = " + ans + "\\).",
+      distractors: [s, n * n * n, n * (n + 1) * (2 * n + 1) / 6, ans + s, ans - s] };
+  } }
+];
+
+/* ===== SUPER ESPERTO — Teoria dei numeri ===== */
+GEN.superesperto["Teoria dei numeri"] = [
+  { id: "s_tdn_order", gen: function () {
+    var m = choice([7, 9, 11, 13, 25]);
+    var cand = []; for (var x = 2; x < m; x++) if (gcd(x, m) === 1) cand.push(x);
+    var a = choice(cand), d = 1, v = a % m; while (v !== 1) { v = (v * a) % m; d++; }
+    return { text: "Qual è il più piccolo intero positivo \\(n\\) tale che \\(" + a + "^{n} \\equiv 1 \\pmod{" + m + "}\\)?",
+      answer: d,
+      hints: ["Calcola le potenze \\(" + a + "^1, " + a + "^2, \\dots \\pmod{" + m + "}\\) finché torni a 1.",
+        "Questo \\(n\\) (l'ordine di " + a + " modulo " + m + ") divide \\(\\varphi(" + m + ")\\)."],
+      solution: "Elevando " + a + " modulo " + m + " si torna a 1 per la prima volta all'esponente \\(" + d + "\\): l'ordine di " + a + " è \\(" + d + "\\).",
+      distractors: [m - 1, d + 1, d - 1, m, d * 2] };
+  } },
+  { id: "s_tdn_totient", gen: function () {
+    var forms = [];
+    (function () {
+      var ps = [3, 5, 7, 11, 13];
+      var p = choice(ps), q = choice(ps.filter(function (x) { return x !== p; }));
+      forms.push({ N: p * q, phi: (p - 1) * (q - 1), why: "\\(\\varphi(pq) = (p-1)(q-1)\\)" });
+      var p2 = choice([3, 5, 7, 11]); forms.push({ N: p2 * p2, phi: p2 * p2 - p2, why: "\\(\\varphi(p^2) = p^2 - p\\)" });
+      var p3 = choice([3, 5, 7, 11, 13]); forms.push({ N: 2 * p3, phi: p3 - 1, why: "\\(\\varphi(2p) = p-1\\)" });
+    })();
+    var f = choice(forms);
+    return { text: "Quanti interi da 1 a " + f.N + " sono coprimi con " + f.N + " (cioè hanno massimo comun divisore 1 con " + f.N + ")?",
+      answer: f.phi,
+      hints: ["È la funzione di Eulero \\(\\varphi(" + f.N + ")\\).",
+        "Fattorizza " + f.N + " e usa " + f.why + "."],
+      solution: "\\(\\varphi(" + f.N + ") = " + f.phi + "\\), usando " + f.why + ".",
+      distractors: [f.N - 1, Math.round(f.N / 2), f.phi + 1, f.phi - 1, f.N] };
+  } },
+  { id: "s_tdn_mod1000", gen: function () {
+    var a = choice([2, 3, 7, 11, 13, 17]), n = randInt(50, 400), ans = modpow(a, n, 1000);
+    return { text: "Qual è il resto della divisione di \\(" + a + "^{" + n + "}\\) per \\(1000\\) (cioè le sue ultime tre cifre)?",
+      answer: ans,
+      hints: ["Le potenze modulo 1000 sono periodiche: il periodo divide \\(\\lambda(1000)=100\\).",
+        "Riduci l'esponente modulo il periodo e calcola \\(" + a + "^{\\,\\cdot}\\bmod 1000\\)."],
+      solution: "Sfruttando la periodicità modulo 1000 si ottiene \\(" + a + "^{" + n + "} \\equiv " + ans + " \\pmod{1000}\\).",
+      distractors: [modpow(a, n, 100), (ans + 1) % 1000, (ans + 100) % 1000, (ans + 500) % 1000, (ans + 10) % 1000] };
+  } }
+];
+
+/* ===== SUPER ESPERTO — Combinatoria e probabilità ===== */
+GEN.superesperto["Combinatoria e probabilità"] = [
+  { id: "s_comb_derang", gen: function () {
+    var n = choice([7, 8]);
+    var D = [1, 0]; for (var i = 2; i <= n; i++) D[i] = (i - 1) * (D[i - 1] + D[i - 2]);
+    var ans = D[n];
+    return { text: "In quanti modi " + n + " lettere possono essere infilate in " + n + " buste indirizzate in modo che nessuna lettera finisca nella busta giusta?",
+      answer: ans,
+      hints: ["È il numero di dismutazioni (permutazioni senza punti fissi) di " + n + " oggetti.",
+        "Usa \\(D_n = (n-1)(D_{n-1}+D_{n-2})\\), oppure \\(D_n = n!\\sum_{k=0}^{n}\\dfrac{(-1)^k}{k!}\\)."],
+      solution: "\\(D_{" + n + "} = " + ans + "\\).",
+      distractors: [fact(n), Math.round(fact(n) / Math.E), ans + 1, ans - 1, fact(n) - 1] };
+  } },
+  { id: "s_comb_catalan", gen: function () {
+    var n = randInt(3, 6), ans = nCr(2 * n, n) / (n + 1);
+    return { text: "In quanti modi si possono tracciare " + n + " corde che uniscono a due a due " + (2 * n) + " punti su una circonferenza senza che due corde si intersechino?",
+      answer: ans,
+      hints: ["È il " + n + "-esimo numero di Catalan \\(C_{" + n + "}\\).",
+        "\\(C_n = \\dfrac{1}{n+1}\\dbinom{2n}{n}\\)."],
+      solution: "\\(C_{" + n + "} = \\dfrac{1}{" + (n + 1) + "}\\dbinom{" + (2 * n) + "}{" + n + "} = " + ans + "\\).",
+      distractors: [nCr(2 * n, n), ans + 1, ans - 1, Math.pow(2, n), fact(n)] };
+  } },
+  { id: "s_comb_fib", gen: function () {
+    var n = randInt(6, 12);
+    var F = [1, 1]; for (var i = 2; i <= n + 2; i++) F[i] = F[i - 1] + F[i - 2];
+    var ans = F[n + 1];
+    return { text: "Quanti sottoinsiemi dell'insieme \\(\\{1, 2, \\dots, " + n + "\\}\\) non contengono due numeri consecutivi (l'insieme vuoto conta)?",
+      answer: ans,
+      hints: ["Prova con pochi elementi: per \\(n=1,2,3\\) ottieni 2, 3, 5...",
+        "Il conteggio segue Fibonacci: per \\(\\{1,\\dots,n\\}\\) è \\(F_{n+2}\\) (con \\(F_1=F_2=1\\))."],
+      solution: "Il numero di tali sottoinsiemi è \\(F_{" + (n + 2) + "} = " + ans + "\\) (successione di Fibonacci).",
+      distractors: [Math.pow(2, n), F[n], ans + 1, ans - 1, n * n] };
+  } }
+];
+
+/* ===== SUPER ESPERTO — Geometria ===== */
+GEN.superesperto["Geometria"] = [
+  { id: "s_geo_diag3d", gen: function () {
+    var a = randInt(2, 12), b = randInt(2, 12), c = randInt(2, 12), ans = a * a + b * b + c * c;
+    return { text: "Un parallelepipedo rettangolo ha spigoli " + a + ", " + b + " e " + c + ". Quanto vale il quadrato della sua diagonale?",
+      answer: ans,
+      hints: ["La diagonale dello spazio si ottiene con Pitagora applicato due volte.",
+        "\\(d^2 = a^2 + b^2 + c^2\\)."],
+      solution: "\\(d^2 = " + a + "^2 + " + b + "^2 + " + c + "^2 = " + (a * a) + " + " + (b * b) + " + " + (c * c) + " = " + ans + "\\).",
+      distractors: [a + b + c, (a + b + c) * (a + b + c), a * a + b * b, 2 * (a * b + b * c + c * a), ans + 1] };
+  } },
+  { id: "s_geo_chords", gen: function () {
+    var a = randInt(2, 9), b = randInt(2, 9), prod = a * b;
+    var divs = []; for (var dd = 2; dd < prod; dd++) if (prod % dd === 0) divs.push(dd);
+    if (!divs.length) { a = 2; b = 6; prod = 12; divs = [2, 3, 4, 6]; }
+    var cc = choice(divs), x = prod / cc;
+    return { text: "Due corde di una circonferenza si intersecano in un punto interno. La prima è divisa in segmenti lunghi " + a + " e " + b + "; la seconda in un segmento lungo " + cc + " e in un altro incognito. Quanto è lungo il segmento incognito?",
+      answer: x,
+      hints: ["Vale il teorema delle corde: il prodotto dei segmenti di una corda è uguale a quello dell'altra.",
+        "\\(" + a + "\\cdot " + b + " = " + cc + "\\cdot x\\)."],
+      solution: "Per il teorema delle corde \\(" + a + "\\cdot " + b + " = " + cc + "\\cdot x\\), quindi \\(x = \\dfrac{" + prod + "}{" + cc + "} = " + x + "\\).",
+      distractors: [a + b - cc, prod - cc, x + 1, cc, Math.abs(a - b)] };
+  } },
+  { id: "s_geo_heron_scaled", gen: function () {
+    var tr = choice(HERON), t = choice([2, 3]);
+    var a = tr[0] * t, b = tr[1] * t, c = tr[2] * t, ans = tr[3] * t * t, s = (a + b + c) / 2;
+    return { text: "Un triangolo ha i lati lunghi " + a + ", " + b + " e " + c + ". Qual è la sua area?",
+      answer: ans,
+      hints: ["Con i tre lati usa la formula di Erone; nota che i lati hanno un fattore comune.",
+        "Semiperimetro \\(s = " + s + "\\); poi \\(A = \\sqrt{s(s-a)(s-b)(s-c)}\\)."],
+      solution: "Con Erone, \\(s = " + s + "\\) e \\(A = \\sqrt{" + s + "\\cdot " + (s - a) + "\\cdot " + (s - b) + "\\cdot " + (s - c) + "} = " + ans + "\\).",
+      distractors: [a + b + c, ans + t, ans - t, s, tr[3]] };
+  } }
+];
+
+/* ===== SUPER ESPERTO — Algebra e logica ===== */
+GEN.superesperto["Algebra e logica"] = [
+  { id: "s_alg_diffsq", gen: function () {
+    var N, ans;
+    do {
+      N = randInt(15, 120); ans = 0;
+      for (var d = 1; d * d < N; d++) { if (N % d === 0 && (d + N / d) % 2 === 0) ans++; }
+    } while (ans < 1);
+    return { text: "Quante coppie di interi positivi \\((x, y)\\) con \\(x > y\\) soddisfano \\(x^2 - y^2 = " + N + "\\)?",
+      answer: ans,
+      hints: ["Scrivi \\(x^2 - y^2 = (x-y)(x+y)\\): cerca i modi di fattorizzare " + N + " come prodotto di due fattori.",
+        "I due fattori \\(x-y\\) e \\(x+y\\) devono avere la stessa parità e \\(x-y < x+y\\)."],
+      solution: "Ogni soluzione corrisponde a una fattorizzazione \\(" + N + " = (x-y)(x+y)\\) con fattori della stessa parità e \\(x-y<x+y\\): sono " + ans + ".",
+      distractors: [ans + 1, ans + 2, (ans > 1 ? ans - 1 : ans + 3), ans * 2, ans + 4] };
+  } },
+  { id: "s_alg_isum", gen: function () {
+    var n = randInt(5, 12), ans = 2 + (n - 1) * Math.pow(2, n + 1);
+    return { text: "Quanto vale la somma \\(1\\cdot 2 + 2\\cdot 2^2 + 3\\cdot 2^3 + \\cdots + " + n + "\\cdot 2^{" + n + "}\\)?",
+      answer: ans,
+      hints: ["Chiama \\(S\\) la somma e considera \\(2S\\): sottraendo compaiono cancellazioni telescopiche.",
+        "Vale \\(\\sum_{i=1}^{n} i\\,2^{i} = (n-1)\\,2^{\\,n+1} + 2\\)."],
+      solution: "\\(\\sum_{i=1}^{" + n + "} i\\cdot 2^{i} = (" + n + "-1)\\cdot 2^{" + (n + 1) + "} + 2 = " + ((n - 1) * Math.pow(2, n + 1)) + " + 2 = " + ans + "\\).",
+      distractors: [(n - 1) * Math.pow(2, n + 1), Math.pow(2, n + 1), n * Math.pow(2, n), ans - 2, ans + 2] };
+  } },
+  { id: "s_alg_rec3", gen: function () {
+    var c = randInt(2, 5), k = randInt(5, 10);
+    var v = c; for (var i = 1; i < k; i++) v = 3 * v - 2;
+    return { text: "Una successione ha \\(a_1 = " + c + "\\) e \\(a_{n+1} = 3a_n - 2\\). Quanto vale \\(a_{" + k + "}\\)?",
+      answer: v,
+      hints: ["Cerca il punto fisso: se \\(a = 3a - 2\\) allora \\(a = 1\\). Studia \\(a_n - 1\\).",
+        "\\(a_{n+1} - 1 = 3(a_n - 1)\\), quindi \\(a_n - 1 = (a_1 - 1)\\,3^{\\,n-1}\\)."],
+      solution: "Da \\(a_n - 1 = (a_1-1)3^{n-1}\\): \\(a_{" + k + "} = (" + c + "-1)\\cdot 3^{" + (k - 1) + "} + 1 = " + ((c - 1) * Math.pow(3, k - 1)) + " + 1 = " + v + "\\).",
+      distractors: [v + 1, (c - 1) * Math.pow(3, k - 1), Math.pow(3, k - 1), v - 1, 3 * v - 2] };
+  } }
+];
+
+var CONCEPT = { base: {}, avanzato: {}, esperto: {}, superesperto: {} };
+CONCEPT.base["Teoria dei numeri"] = { id: "c_b_tdn", make: function () {
+  return { q: "Quante cifre ha il numero \\(2^{10}\\cdot 5^{8}\\)?", options: ["8", "9", "10", "11", "18"], correct: 1,
+    exp: "\\(2^{10}\\cdot 5^8 = 2^2\\cdot(2^8\\cdot 5^8) = 4\\cdot 10^8 = 400\\,000\\,000\\): ha 9 cifre." }; } };
+CONCEPT.base["Combinatoria e probabilità"] = { id: "c_b_comb", make: function () {
+  return { q: "Qual è il numero minimo di persone che garantisce che almeno due siano nate nello stesso mese?", options: ["12", "13", "24", "2", "23"], correct: 1,
+    exp: "I mesi (cassetti) sono 12: con 13 persone, per il principio dei cassetti, due cadono nello stesso mese." }; } };
+CONCEPT.base["Geometria"] = { id: "c_b_geo", make: function () {
+  return { q: "Se il raggio di un cerchio raddoppia, di quante volte aumenta la sua area?", options: ["2", "3", "4", "8", "16"], correct: 2,
+    exp: "L'area è \\(\\pi r^2\\): con \\(2r\\) diventa \\(\\pi(2r)^2 = 4\\pi r^2\\), cioè 4 volte." }; } };
+CONCEPT.base["Algebra e logica"] = { id: "c_b_alg", make: function () {
+  return { q: "Cinque bicchieri sono tutti capovolti. A ogni mossa se ne rovesciano esattamente due. È possibile averli tutti dritti?", options: ["Sì, in 3 mosse", "Sì, in 5 mosse", "No, è impossibile", "Sì, in 10 mosse", "Solo con 4 bicchieri"], correct: 2,
+    exp: "Il numero di bicchieri dritti parte da 0 (pari) e ogni mossa lo cambia di \\(+2, 0\\) o \\(-2\\): resta pari. Cinque è dispari, quindi impossibile." }; } };
+
+CONCEPT.avanzato["Teoria dei numeri"] = { id: "c_a_tdn", make: function () {
+  var p = choice([7, 11, 13]);
+  return { q: "Se \\(p = " + p + "\\) e \\(a\\) non è multiplo di \\(p\\), quanto vale \\(a^{" + (p - 1) + "} \\bmod " + p + "\\)?", options: ["0", "1", "a", "" + (p - 1), "a-1"], correct: 1,
+    exp: "Per il piccolo teorema di Fermat, se \\(p\\) è primo e \\(p \\nmid a\\), allora \\(a^{p-1} \\equiv 1 \\pmod p\\)." }; } };
+CONCEPT.avanzato["Combinatoria e probabilità"] = { id: "c_a_comb", make: function () {
+  var n = choice([5, 6]); var ans = fact(n - 1);
+  return { q: "In quanti modi si possono sedere " + n + " persone attorno a un tavolo rotondo (rotazioni equivalenti)?", options: [String(fact(n)), String(ans), String(n * n), String(fact(n - 2)), String(n)], correct: 1,
+    exp: "Fissata una persona per eliminare le rotazioni, le altre si dispongono in \\((" + n + "-1)! = " + ans + "\\) modi." }; } };
+CONCEPT.avanzato["Geometria"] = { id: "c_a_geo", make: function () {
+  var k = choice([2, 3, 4]);
+  return { q: "Due triangoli sono simili con rapporto di similitudine \\(" + k + "\\). Qual è il rapporto tra le loro aree?", options: [String(k), String(k * k), String(k * k * k), String(k * k + 1), String(k * k * k + k)], correct: 1,
+    exp: "Nelle figure simili le aree stanno come il quadrato del rapporto: \\(" + k + "^2 = " + (k * k) + "\\)." }; } };
+CONCEPT.avanzato["Algebra e logica"] = { id: "c_a_alg", make: function () {
+  return { q: "Quante soluzioni reali ha l'equazione \\(x^2 + 1 = 0\\)?", options: ["0", "1", "2", "infinite", "-1"], correct: 0,
+    exp: "\\(x^2 \\ge 0\\) per ogni reale, quindi \\(x^2+1 \\ge 1 > 0\\): nessuna soluzione reale (discriminante negativo)." }; } };
+
+/* ---------- costruzione pool quiz: 3 domande per area, opzioni mescolate ---------- */
+CONCEPT.esperto["Teoria dei numeri"] = { id: "c_e_tdn", make: function () {
+  return { q: "Per quali interi \\(n\\) il numero \\(n^2 + n\\) è pari?", options: ["Solo n pari", "Solo n dispari", "Per ogni n", "Mai", "Solo n primo"], correct: 2,
+    exp: "\\(n^2+n = n(n+1)\\) è il prodotto di due interi consecutivi, quindi è sempre pari." }; } };
+CONCEPT.esperto["Combinatoria e probabilità"] = { id: "c_e_comb", make: function () {
+  var n = choice([5, 6, 7]); var ans = Math.pow(2, n);
+  return { q: "Quanti sottoinsiemi ha un insieme di " + n + " elementi (inclusi l'insieme vuoto e l'insieme stesso)?", options: [String(ans), String(n * n), String(fact(n)), String(2 * n), String(ans / 2)], correct: 0,
+    exp: "Ogni elemento c'è o non c'è: \\(2^{" + n + "} = " + ans + "\\)." }; } };
+CONCEPT.esperto["Geometria"] = { id: "c_e_geo", make: function () {
+  return { q: "In un triangolo, la somma delle lunghezze di due lati qualsiasi è sempre...", options: ["uguale al terzo lato", "maggiore del terzo lato", "minore del terzo lato", "il doppio del terzo lato", "dipende dal triangolo"], correct: 1,
+    exp: "È la disuguaglianza triangolare: ogni lato è minore della somma degli altri due." }; } };
+CONCEPT.esperto["Algebra e logica"] = { id: "c_e_alg", make: function () {
+  return { q: "Il prodotto di due numeri irrazionali può essere un numero razionale?", options: ["Sì", "No", "Solo se sono uguali", "Mai", "Solo se sono opposti"], correct: 0,
+    exp: "Per esempio \\(\\sqrt{2}\\cdot\\sqrt{2} = 2\\), che è razionale." }; } };
+
+CONCEPT.superesperto["Teoria dei numeri"] = { id: "c_s_tdn", make: function () {
+  var p = choice([5, 7, 11, 13]);
+  return { q: "Se \\(p = " + p + "\\) è primo, quanto vale \\((p-1)! \\bmod p\\)?", options: ["0", "1", String(p - 1), String(p - 2), "2"], correct: 2,
+    exp: "Per il teorema di Wilson \\((p-1)! \\equiv -1 \\equiv " + (p - 1) + " \\pmod{" + p + "}\\)." }; } };
+CONCEPT.superesperto["Combinatoria e probabilità"] = { id: "c_s_comb", make: function () {
+  var n = choice([8, 10, 12]); var ans = n * (n - 3) / 2;
+  return { q: "Quante diagonali ha un poligono convesso di " + n + " lati?", options: [String(ans), String(n * (n - 1) / 2), String(n), String(n * (n - 3)), String(ans - 2)], correct: 0,
+    exp: "Diagonali \\(= \\dfrac{n(n-3)}{2} = \\dfrac{" + n + "\\cdot " + (n - 3) + "}{2} = " + ans + "\\)." }; } };
+CONCEPT.superesperto["Geometria"] = { id: "c_s_geo", make: function () {
+  var k = choice([2, 3]);
+  return { q: "Due solidi sono simili con rapporto di similitudine \\(" + k + "\\). Qual è il rapporto tra i loro volumi?", options: [String(k), String(k * k), String(k * k * k), String(k * k + 1), String(k * k * k + k)], correct: 2,
+    exp: "Nei solidi simili i volumi stanno come il cubo del rapporto: \\(" + k + "^3 = " + (k * k * k) + "\\)." }; } };
+CONCEPT.superesperto["Algebra e logica"] = { id: "c_s_alg", make: function () {
+  return { q: "Quante soluzioni reali ha l'equazione \\(x^3 = 8\\)?", options: ["0", "1", "2", "3", "infinite"], correct: 1,
+    exp: "\\(x^3 = 8\\) ha un'unica soluzione reale, \\(x = 2\\) (le altre due radici cubiche sono complesse)." }; } };
+
+function numericToQuestion(area, gnObj) {
+  var r = gnObj.gen();
+  var mo = makeOptions(r.answer, r.distractors);
+  return { area: area, q: r.text, options: mo.options, correct: mo.correct, exp: r.solution };
+}
+function conceptToQuestion(area, cObj) {
+  var c = cObj.make();
+  var s = shuffleQ({ options: c.options, correct: c.correct });
+  return { area: area, q: c.q, options: s.options, correct: s.correct, exp: c.exp };
+}
+function buildQuizPool(level, perArea) {
+  perArea = perArea || 3;
+  var out = [];
+  AREAS.forEach(function (area) {
+    var builders = GEN[level][area].map(function (g) { return function () { return numericToQuestion(area, g); }; });
+    var cpt = CONCEPT[level][area];
+    if (cpt) builders.push(function () { return conceptToQuestion(area, cpt); });
+    sample(builders, Math.min(perArea, builders.length)).forEach(function (b) { out.push(b()); });
+  });
+  return shuffle(out);
+}
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { AREAS: AREAS, GEN: GEN, CONCEPT: CONCEPT, makeOptions: makeOptions, buildQuizPool: buildQuizPool,
+    helpers: { randInt: randInt, choice: choice, shuffle: shuffle, sample: sample, gcd: gcd, fact: fact, nCr: nCr, modpow: modpow, trailingZeros: trailingZeros, legendre: legendre, lastDigitPow: lastDigitPow, lastDigitCycle: lastDigitCycle } };
+}
+
 
   var ICON_REFRESH = '<svg class="ic" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v4h4"/></svg>';
 
   /* ---------- livello di difficoltà ---------- */
-  function loadLevel() { try { var v = localStorage.getItem("archimede-livello"); if (v === "base" || v === "avanzato") return v; } catch (e) {} return "base"; }
+  var LEVELS = [["base", "Base"], ["avanzato", "Avanzato"], ["esperto", "Esperto"], ["superesperto", "Super esperto"]];
+  var LEVEL_KEYS = LEVELS.map(function (l) { return l[0]; });
+  function loadLevel() { try { var v = localStorage.getItem("olimat-livello"); if (LEVEL_KEYS.indexOf(v) !== -1) return v; } catch (e) {} return "base"; }
   var level = loadLevel();
   var levelSelectors = [];
   function renderLevelSelectors() {
@@ -1122,10 +1516,12 @@ input[type="range"]{accent-color:var(--accent); width:100%}
       });
     });
   }
-  function setLevel(l) { if (l === level) return; level = l; try { localStorage.setItem("archimede-livello", l); } catch (e) {} renderLevelSelectors(); buildPratica(); resetQuiz(); }
+  function setLevel(l) { if (l === level) return; level = l; try { localStorage.setItem("olimat-livello", l); } catch (e) {} renderLevelSelectors(); buildPratica(); resetQuiz(); }
   function makeLevelSelector() {
     var d = document.createElement("div"); d.className = "seg"; d.setAttribute("role", "group"); d.setAttribute("aria-label", "Livello di difficoltà");
-    d.innerHTML = '<span class="seg-label">Livello</span><button class="tab" type="button" data-level="base">Base</button><button class="tab" type="button" data-level="avanzato">Avanzato</button>';
+    var html = '<span class="seg-label">Livello</span>';
+    LEVELS.forEach(function (l) { html += '<button class="tab" type="button" data-level="' + l[0] + '">' + l[1] + '</button>'; });
+    d.innerHTML = html;
     Array.prototype.forEach.call(d.querySelectorAll("[data-level]"), function (b) { b.addEventListener("click", function () { setLevel(b.getAttribute("data-level")); }); });
     levelSelectors.push(d); return d;
   }
