@@ -190,6 +190,9 @@ input[type="range"]{accent-color:var(--accent); width:100%}
 }
 .katex{font-size:1.02em}
 .katex-display{overflow-x:auto; overflow-y:hidden; padding:.2rem 0}
+  .proof{white-space:nowrap;margin-left:.3rem;font-size:.8em;font-weight:600;text-decoration:none;color:var(--accent)}
+  .proof:hover{text-decoration:underline}
+  .proof::after{content:"\2197";margin-left:.12em;font-size:.92em;opacity:.75}
 </style>
 </head>
 <body>
@@ -256,27 +259,27 @@ input[type="range"]{accent-color:var(--accent); width:100%}
 
     <div class="card" id="teoria-legenda">
       <h2>Legenda dei simboli</h2>
-      <p class="lead">Il significato dei simboli che compaiono nei richiami, negli esercizi e nei quiz. Se incontri una notazione che non ricordi, la trovi spiegata qui.</p>
+      <p class="lead">Il significato dei simboli che compaiono nei richiami, negli esercizi e nei quiz. Se incontri una notazione che non ricordi, la trovi spiegata qui; ogni voce rimanda a una spiegazione o dimostrazione.</p>
       <div class="grid2">
         <div>
           <h3>Notazioni generali</h3>
           <ul class="pill-list">
-            <li>\(a \equiv b \pmod m\) — <strong>congruenza</strong>: \(a\) e \(b\) danno lo stesso resto quando li dividi per \(m\).</li>
-            <li>\(m \mid n\) significa «\(m\) <strong>divide</strong> \(n\)»; \(m \nmid n\) significa «non lo divide».</li>
-            <li>\(\lfloor x \rfloor\) — <strong>parte intera</strong> di \(x\) (arrotondamento per difetto); \(\lceil x \rceil\) arrotonda per eccesso.</li>
-            <li>\(n!\) — <strong>fattoriale</strong>: \(n! = 1\cdot 2\cdots n\) (con \(0!=1\)).</li>
-            <li>\(\binom{n}{k}\) — <strong>coefficiente binomiale</strong>: in quanti modi si scelgono \(k\) oggetti fra \(n\), \(\binom{n}{k}=\dfrac{n!}{k!\,(n-k)!}\).</li>
-            <li>\(\operatorname{MCD}\) e \(\operatorname{mcm}\) — <strong>massimo comun divisore</strong> e <strong>minimo comune multiplo</strong>. Due numeri sono <em>coprimi</em> se il loro \(\operatorname{MCD}\) vale \(1\).</li>
+            <li>\(a \equiv b \pmod m\) — <strong>congruenza</strong>: \(a\) e \(b\) danno lo stesso resto quando li dividi per \(m\). <a class="proof" href="https://it.wikipedia.org/wiki/Aritmetica_modulare" target="_blank" rel="noopener">spiegazione</a></li>
+            <li>\(m \mid n\) significa «\(m\) <strong>divide</strong> \(n\)»; \(m \nmid n\) significa «non lo divide». <a class="proof" href="https://it.wikipedia.org/wiki/Divisibile" target="_blank" rel="noopener">spiegazione</a></li>
+            <li>\(\lfloor x \rfloor\) — <strong>parte intera</strong> di \(x\) (arrotondamento per difetto); \(\lceil x \rceil\) arrotonda per eccesso. <a class="proof" href="https://it.wikipedia.org/wiki/Parte_intera" target="_blank" rel="noopener">spiegazione</a></li>
+            <li>\(n!\) — <strong>fattoriale</strong>: \(n! = 1\cdot 2\cdots n\) (con \(0!=1\)). <a class="proof" href="https://it.wikipedia.org/wiki/Fattoriale" target="_blank" rel="noopener">spiegazione</a></li>
+            <li>\(\binom{n}{k}\) — <strong>coefficiente binomiale</strong>: in quanti modi si scelgono \(k\) oggetti fra \(n\), \(\binom{n}{k}=\dfrac{n!}{k!\,(n-k)!}\). <a class="proof" href="https://it.wikipedia.org/wiki/Coefficiente_binomiale" target="_blank" rel="noopener">spiegazione</a></li>
+            <li>\(\operatorname{MCD}\) e \(\operatorname{mcm}\) — <strong>massimo comun divisore</strong> e <strong>minimo comune multiplo</strong>. Due numeri sono <em>coprimi</em> se il loro \(\operatorname{MCD}\) vale \(1\). <a class="proof" href="https://it.wikipedia.org/wiki/Massimo_comune_divisore" target="_blank" rel="noopener">spiegazione</a></li>
           </ul>
         </div>
         <div>
           <h3>Funzioni e successioni ricorrenti</h3>
           <ul class="pill-list">
-            <li>\(\varphi(m)\) — <strong>funzione di Eulero</strong> (o toziente): quanti interi da \(1\) a \(m\) sono coprimi con \(m\). Es.: \(\varphi(10)=4\), cioè \(1,3,7,9\).</li>
-            <li>\(\sigma(N)\) — <strong>somma dei divisori</strong> di \(N\), compresi \(1\) e \(N\). Es.: \(\sigma(6)=1+2+3+6=12\).</li>
-            <li><strong>Numeri di Fibonacci</strong> \(F_n\): \(1,1,2,3,5,8,13,\dots\), ognuno è la somma dei due precedenti.</li>
-            <li><strong>Numeri di Catalan</strong> \(C_n=\dfrac{1}{n+1}\binom{2n}{n}\): contano parentesi ben formate, triangolazioni, cammini che non scendono sotto la diagonale.</li>
-            <li><strong>Dismutazioni</strong> \(D_n\): permutazioni in cui nessun elemento resta al proprio posto (nessun punto fisso).</li>
+            <li>\(\varphi(m)\) — <strong>funzione di Eulero</strong> (o toziente): quanti interi da \(1\) a \(m\) sono coprimi con \(m\). Es.: \(\varphi(10)=4\), cioè \(1,3,7,9\). <a class="proof" href="https://it.wikipedia.org/wiki/Funzione_%CF%86_di_Eulero" target="_blank" rel="noopener">spiegazione</a></li>
+            <li>\(\sigma(N)\) — <strong>somma dei divisori</strong> di \(N\), compresi \(1\) e \(N\). Es.: \(\sigma(6)=1+2+3+6=12\). <a class="proof" href="https://it.wikipedia.org/wiki/Funzione_sigma" target="_blank" rel="noopener">spiegazione</a></li>
+            <li><strong>Numeri di Fibonacci</strong> \(F_n\): \(1,1,2,3,5,8,13,\dots\), ognuno è la somma dei due precedenti. <a class="proof" href="https://it.wikipedia.org/wiki/Successione_di_Fibonacci" target="_blank" rel="noopener">spiegazione</a></li>
+            <li><strong>Numeri di Catalan</strong> \(C_n=\dfrac{1}{n+1}\binom{2n}{n}\): contano parentesi ben formate, triangolazioni, cammini che non scendono sotto la diagonale. <a class="proof" href="https://it.wikipedia.org/wiki/Numero_di_Catalan" target="_blank" rel="noopener">spiegazione</a></li>
+            <li><strong>Dismutazioni</strong> \(D_n\): permutazioni in cui nessun elemento resta al proprio posto (nessun punto fisso). <a class="proof" href="https://it.wikipedia.org/wiki/Dismutazione_(matematica)" target="_blank" rel="noopener">spiegazione</a></li>
           </ul>
         </div>
       </div>
@@ -1610,78 +1613,121 @@ if (typeof module !== "undefined" && module.exports) {
   var ICON_REFRESH = '<svg class="ic" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v4h4"/></svg>';
 
   /* ---------- Teoria per livello ---------- */
+  var P = {
+    congruenza: "https://it.wikipedia.org/wiki/Aritmetica_modulare",
+    criteridiv: "https://it.wikipedia.org/wiki/Criteri_di_divisibilit%C3%A0",
+    tfa: "https://it.wikipedia.org/wiki/Teorema_fondamentale_dell%27aritmetica",
+    mcdmcm: "https://it.wikipedia.org/wiki/Massimo_comune_divisore",
+    combinatoria: "https://it.wikipedia.org/wiki/Calcolo_combinatorio",
+    binomiale: "https://it.wikipedia.org/wiki/Coefficiente_binomiale",
+    cassetti: "https://it.wikipedia.org/wiki/Principio_dei_cassetti",
+    anagrammi: "https://www.youmath.it/lezioni/probabilita/calcolo-combinatorio/1213-permutazione-con-ripetizione.html",
+    tartaglia: "https://it.wikipedia.org/wiki/Triangolo_di_Tartaglia",
+    dismutazioni: "https://it.wikipedia.org/wiki/Dismutazione_(matematica)",
+    incesc: "https://it.wikipedia.org/wiki/Principio_di_inclusione-esclusione",
+    stellesbarre: "https://matematicaoltre.altervista.org/combinazioni-con-ripetizione-formula-spiegazione-dettagliata-ed-esercizi-risolti-di-varie-difficolta/",
+    catalan: "https://it.wikipedia.org/wiki/Numero_di_Catalan",
+    fibonacci: "https://it.wikipedia.org/wiki/Successione_di_Fibonacci",
+    angolipoligono: "https://www.youmath.it/domande-a-risposte/view/5928-somma-degli-angoli-interni-di-un-poligono.html",
+    poligonoregolare: "https://it.wikipedia.org/wiki/Poligono_regolare",
+    areatriangolo: "https://www.youmath.it/domande-a-risposte/view/8087-area-del-triangolo.html",
+    erone: "https://it.wikipedia.org/wiki/Formula_di_Erone",
+    similitudine: "https://it.wikipedia.org/wiki/Similitudine_(geometria)",
+    areacerchio: "https://www.youmath.it/domande-a-risposte/view/1577-area-di-un-cerchio.html",
+    shoelace: "https://it.wikipedia.org/wiki/Formula_dell%27area_di_Gauss",
+    pick: "https://it.wikipedia.org/wiki/Teorema_di_Pick",
+    raggioinscritto: "https://www.andreaminini.org/geometria/triangolo/il-raggio-di-un-cerchio-inscritto-in-un-triangolo",
+    corde: "https://it.wikipedia.org/wiki/Teorema_delle_corde",
+    diagonalespazio: "https://www.youmath.it/domande-a-risposte/view/8075-diagonale-di-un-parallelepipedo.html",
+    prodottinotevoli: "https://it.wikipedia.org/wiki/Prodotto_notevole",
+    gauss: "https://www.youmath.it/domande-a-risposte/view/8742-formula-di-gauss-somma-dei-primi-n-numeri-naturali.html",
+    sommecubi: "https://it.wikipedia.org/wiki/Teorema_di_Nicomaco",
+    geometrica: "https://it.wikipedia.org/wiki/Serie_geometrica",
+    sommemiste: "https://it.wikipedia.org/wiki/Progressione_geometrica",
+    viete: "https://it.wikipedia.org/wiki/Formule_di_Vi%C3%A8te",
+    ricorrenze: "https://it.wikipedia.org/wiki/Relazione_di_ricorrenza",
+    legendre: "https://it.wikipedia.org/wiki/Identit%C3%A0_di_Legendre-de_Polignac",
+    fermat: "https://it.wikipedia.org/wiki/Piccolo_teorema_di_Fermat",
+    ordine: "https://it.wikipedia.org/wiki/Ordine_moltiplicativo",
+    sigma: "https://it.wikipedia.org/wiki/Funzione_sigma",
+    crt: "https://it.wikipedia.org/wiki/Teorema_cinese_del_resto",
+    eulero: "https://it.wikipedia.org/wiki/Teorema_di_Eulero_(aritmetica_modulare)",
+    eulerophi: "https://it.wikipedia.org/wiki/Funzione_%CF%86_di_Eulero",
+    wilson: "https://it.wikipedia.org/wiki/Teorema_di_Wilson"
+  };
+  function pf(u) { return u ? ' <a class="proof" href="' + u + '" target="_blank" rel="noopener">dimostrazione</a>' : ''; }
   var TEORIA = {
     base: [
       { area: "Teoria dei numeri", html:
-        "<p>Fattorizzazione unica: ogni intero \\(>1\\) è prodotto di primi. Se \\(N=p_1^{a_1}\\cdots p_k^{a_k}\\), il numero di divisori è \\((a_1+1)\\cdots(a_k+1)\\).</p>" +
-        "<p>Legame utile: \\(\\operatorname{MCD}(a,b)\\cdot\\operatorname{mcm}(a,b)=a\\cdot b\\).</p>" +
-        "<p><strong>Ultime cifre.</strong> Le potenze \\(a^n\\) hanno ultima cifra periodica (mod 10): per esempio \\(7,9,3,1,7,9,3,1,\\dots\\)</p>" +
-        "<p><strong>Divisibilità rapide.</strong> Per 3 e 9 conta la somma delle cifre; per 11 la somma a segni alterni.</p>" },
+        "<p>Fattorizzazione unica: ogni intero \\(>1\\) è prodotto di primi. Se \\(N=p_1^{a_1}\\cdots p_k^{a_k}\\), il numero di divisori è \\((a_1+1)\\cdots(a_k+1)\\)." + pf(P.tfa) + "</p>" +
+        "<p>Legame utile: \\(\\operatorname{MCD}(a,b)\\cdot\\operatorname{mcm}(a,b)=a\\cdot b\\)." + pf(P.mcdmcm) + "</p>" +
+        "<p><strong>Ultime cifre.</strong> Le potenze \\(a^n\\) hanno ultima cifra periodica (mod 10): per esempio \\(7,9,3,1,7,9,3,1,\\dots\\)" + pf(P.congruenza) + "</p>" +
+        "<p><strong>Divisibilità rapide.</strong> Per 3 e 9 conta la somma delle cifre; per 11 la somma a segni alterni." + pf(P.criteridiv) + "</p>" },
       { area: "Combinatoria e probabilità", html:
-        "<p><strong>Regola del prodotto</strong> (scelte indipendenti si moltiplicano) e <strong>della somma</strong> (alternative disgiunte si sommano).</p>" +
-        "<p>Disposizioni di \\(k\\) tra \\(n\\): \\(n(n-1)\\cdots(n-k+1)\\). Combinazioni: \\(\\binom{n}{k}=\\dfrac{n!}{k!\\,(n-k)!}\\).</p>" +
-        "<p><strong>Principio dei cassetti.</strong> Con \\(n\\) oggetti in \\(k\\) contenitori, uno ne contiene almeno \\(\\left\\lceil n/k\\right\\rceil\\).</p>" },
+        "<p><strong>Regola del prodotto</strong> (scelte indipendenti si moltiplicano) e <strong>della somma</strong> (alternative disgiunte si sommano)." + pf(P.combinatoria) + "</p>" +
+        "<p>Disposizioni di \\(k\\) tra \\(n\\): \\(n(n-1)\\cdots(n-k+1)\\). Combinazioni: \\(\\binom{n}{k}=\\dfrac{n!}{k!\\,(n-k)!}\\)." + pf(P.binomiale) + "</p>" +
+        "<p><strong>Principio dei cassetti.</strong> Con \\(n\\) oggetti in \\(k\\) contenitori, uno ne contiene almeno \\(\\left\\lceil n/k\\right\\rceil\\)." + pf(P.cassetti) + "</p>" },
       { area: "Geometria", html:
-        "<p>Somma degli angoli interni di un poligono di \\(n\\) lati: \\((n-2)\\cdot 180^\\circ\\).</p>" +
-        "<p>Area del triangolo: \\(A=\\tfrac12 b\\,h\\); con i lati, Erone: \\(A=\\sqrt{s(s-a)(s-b)(s-c)}\\), \\(s=\\tfrac{a+b+c}{2}\\).</p>" +
-        "<p><strong>Similitudine.</strong> Con rapporto \\(k\\), le aree stanno come \\(k^2\\). Cerchio: \\(A=\\pi r^2\\).</p>" },
+        "<p>Somma degli angoli interni di un poligono di \\(n\\) lati: \\((n-2)\\cdot 180^\\circ\\)." + pf(P.angolipoligono) + "</p>" +
+        "<p>Area del triangolo: \\(A=\\tfrac12 b\\,h\\)" + pf(P.areatriangolo) + "; con i lati, Erone: \\(A=\\sqrt{s(s-a)(s-b)(s-c)}\\), \\(s=\\tfrac{a+b+c}{2}\\)" + pf(P.erone) + ".</p>" +
+        "<p><strong>Similitudine.</strong> Con rapporto \\(k\\), le aree stanno come \\(k^2\\)" + pf(P.similitudine) + ". Cerchio: \\(A=\\pi r^2\\)" + pf(P.areacerchio) + ".</p>" },
       { area: "Algebra e logica", html:
-        "<p><strong>Prodotti notevoli.</strong> \\((a+b)^2=a^2+2ab+b^2\\), quindi \\(a^2+b^2=(a+b)^2-2ab\\); inoltre \\(a^2-b^2=(a-b)(a+b)\\).</p>" +
-        "<p><strong>Somma di Gauss.</strong> \\(1+2+\\cdots+n=\\dfrac{n(n+1)}{2}\\); la somma dei primi \\(n\\) dispari vale \\(n^2\\).</p>" +
+        "<p><strong>Prodotti notevoli.</strong> \\((a+b)^2=a^2+2ab+b^2\\), quindi \\(a^2+b^2=(a+b)^2-2ab\\); inoltre \\(a^2-b^2=(a-b)(a+b)\\)." + pf(P.prodottinotevoli) + "</p>" +
+        "<p><strong>Somma di Gauss.</strong> \\(1+2+\\cdots+n=\\dfrac{n(n+1)}{2}\\); la somma dei primi \\(n\\) dispari vale \\(n^2\\)." + pf(P.gauss) + "</p>" +
         "<p><strong>Parità e invarianti.</strong> Una quantità che cambia sempre di un valore pari mantiene la sua parità: utile per le impossibilità.</p>" }
     ],
     avanzato: [
       { area: "Teoria dei numeri", html:
-        "<p><strong>Congruenze.</strong> \\(a\\equiv b \\pmod m\\) significa \\(m\\mid(a-b)\\). Il resto di \\(a^n\\) si trova sfruttando la periodicità delle potenze.</p>" +
-        "<p><strong>Esponente di un primo in \\(n!\\)</strong> (Legendre): \\(\\left\\lfloor n/p\\right\\rfloor+\\left\\lfloor n/p^2\\right\\rfloor+\\cdots\\). Gli zeri finali di \\(n!\\) contano i fattori 5.</p>" },
+        "<p><strong>Congruenze.</strong> \\(a\\equiv b \\pmod m\\) significa \\(m\\mid(a-b)\\). Il resto di \\(a^n\\) si trova sfruttando la periodicità delle potenze." + pf(P.congruenza) + "</p>" +
+        "<p><strong>Esponente di un primo in \\(n!\\)</strong> (Legendre): \\(\\left\\lfloor n/p\\right\\rfloor+\\left\\lfloor n/p^2\\right\\rfloor+\\cdots\\). Gli zeri finali di \\(n!\\) contano i fattori 5." + pf(P.legendre) + "</p>" },
       { area: "Combinatoria e probabilità", html:
-        "<p><strong>Anagrammi con ripetizioni.</strong> Con lettere ripetute: \\(\\dfrac{n!}{k_1!\\,k_2!\\cdots}\\).</p>" +
-        "<p><strong>Percorsi su griglia</strong> da \\((0,0)\\) a \\((a,b)\\) con passi a destra/alto: \\(\\binom{a+b}{a}\\).</p>" +
-        "<p>Combinazioni \\(\\binom{n}{k}\\) e triangolo di Tartaglia; principio dei cassetti.</p>" },
+        "<p><strong>Anagrammi con ripetizioni.</strong> Con lettere ripetute: \\(\\dfrac{n!}{k_1!\\,k_2!\\cdots}\\)." + pf(P.anagrammi) + "</p>" +
+        "<p><strong>Percorsi su griglia</strong> da \\((0,0)\\) a \\((a,b)\\) con passi a destra/alto: \\(\\binom{a+b}{a}\\)." + pf(P.binomiale) + "</p>" +
+        "<p>Combinazioni \\(\\binom{n}{k}\\) e triangolo di Tartaglia; principio dei cassetti." + pf(P.tartaglia) + "</p>" },
       { area: "Geometria", html:
-        "<p><strong>Formula di Gauss (shoelace).</strong> Area di un poligono dai vertici: \\(A=\\tfrac12\\left|\\sum (x_i y_{i+1}-x_{i+1} y_i)\\right|\\).</p>" +
-        "<p><strong>Teorema di Pick.</strong> Per un poligono a vertici interi: \\(A=I+\\dfrac{B}{2}-1\\).</p>" +
-        "<p>Angolo interno di un poligono regolare di \\(n\\) lati: \\(\\dfrac{(n-2)\\cdot 180^\\circ}{n}\\).</p>" },
+        "<p><strong>Formula di Gauss (shoelace).</strong> Area di un poligono dai vertici: \\(A=\\tfrac12\\left|\\sum (x_i y_{i+1}-x_{i+1} y_i)\\right|\\)." + pf(P.shoelace) + "</p>" +
+        "<p><strong>Teorema di Pick.</strong> Per un poligono a vertici interi: \\(A=I+\\dfrac{B}{2}-1\\)." + pf(P.pick) + "</p>" +
+        "<p>Angolo interno di un poligono regolare di \\(n\\) lati: \\(\\dfrac{(n-2)\\cdot 180^\\circ}{n}\\)." + pf(P.poligonoregolare) + "</p>" },
       { area: "Algebra e logica", html:
-        "<p><strong>Formule di Viète.</strong> Per \\(x^2 - Sx + P = 0\\): somma delle radici \\(S\\), prodotto \\(P\\); così \\(r_1^2+r_2^2=S^2-2P\\).</p>" +
-        "<p><strong>Identità.</strong> Da \\(x+\\tfrac1x=k\\) segue \\(x^2+\\tfrac1{x^2}=k^2-2\\).</p>" +
-        "<p><strong>Somme geometriche.</strong> \\(1+2+4+\\cdots+2^{n}=2^{\\,n+1}-1\\).</p>" }
+        "<p><strong>Formule di Viète.</strong> Per \\(x^2 - Sx + P = 0\\): somma delle radici \\(S\\), prodotto \\(P\\); così \\(r_1^2+r_2^2=S^2-2P\\)." + pf(P.viete) + "</p>" +
+        "<p><strong>Identità.</strong> Da \\(x+\\tfrac1x=k\\) segue \\(x^2+\\tfrac1{x^2}=k^2-2\\)." + pf(P.prodottinotevoli) + "</p>" +
+        "<p><strong>Somme geometriche.</strong> \\(1+2+4+\\cdots+2^{n}=2^{\\,n+1}-1\\)." + pf(P.geometrica) + "</p>" }
     ],
     esperto: [
       { area: "Teoria dei numeri", html:
-        "<p><strong>Piccolo teorema di Fermat.</strong> Se \\(p\\) è primo e \\(p\\nmid a\\), allora \\(a^{p-1}\\equiv 1 \\pmod p\\).</p>" +
-        "<p><strong>Ordine.</strong> Il più piccolo \\(d>0\\) con \\(a^d\\equiv 1\\) divide \\(p-1\\): riduci l'esponente modulo \\(d\\) (o modulo \\(p-1\\)).</p>" +
-        "<p><strong>Somma dei divisori.</strong> \\(\\sigma(N)\\) è la somma di tutti i divisori di \\(N\\) (compresi \\(1\\) e \\(N\\)); è moltiplicativa e \\(\\sigma(p^a)=\\dfrac{p^{a+1}-1}{p-1}\\). <strong>Teorema cinese del resto</strong> per sistemi di congruenze.</p>" },
+        "<p><strong>Piccolo teorema di Fermat.</strong> Se \\(p\\) è primo e \\(p\\nmid a\\), allora \\(a^{p-1}\\equiv 1 \\pmod p\\)." + pf(P.fermat) + "</p>" +
+        "<p><strong>Ordine.</strong> Il più piccolo \\(d>0\\) con \\(a^d\\equiv 1\\) divide \\(p-1\\): riduci l'esponente modulo \\(d\\) (o modulo \\(p-1\\))." + pf(P.ordine) + "</p>" +
+        "<p><strong>Somma dei divisori.</strong> \\(\\sigma(N)\\) è la somma di tutti i divisori di \\(N\\) (compresi \\(1\\) e \\(N\\)); è moltiplicativa e \\(\\sigma(p^a)=\\dfrac{p^{a+1}-1}{p-1}\\)" + pf(P.sigma) + ". <strong>Teorema cinese del resto</strong> per sistemi di congruenze." + pf(P.crt) + "</p>" },
       { area: "Combinatoria e probabilità", html:
-        "<p><strong>Dismutazioni</strong> (permutazioni senza punti fissi): \\(D_n=(n-1)(D_{n-1}+D_{n-2})\\), con \\(D_1=0,\\ D_2=1\\).</p>" +
-        "<p><strong>Inclusione-esclusione</strong> per contare unioni di insiemi con sovrapposizioni.</p>" +
-        "<p><strong>Stelle e sbarre.</strong> Distribuire \\(n\\) oggetti identici in \\(k\\) gruppi: \\(\\binom{n+k-1}{k-1}\\).</p>" },
+        "<p><strong>Dismutazioni</strong> (permutazioni senza punti fissi): \\(D_n=(n-1)(D_{n-1}+D_{n-2})\\), con \\(D_1=0,\\ D_2=1\\)." + pf(P.dismutazioni) + "</p>" +
+        "<p><strong>Inclusione-esclusione</strong> per contare unioni di insiemi con sovrapposizioni." + pf(P.incesc) + "</p>" +
+        "<p><strong>Stelle e sbarre.</strong> Distribuire \\(n\\) oggetti identici in \\(k\\) gruppi: \\(\\binom{n+k-1}{k-1}\\)." + pf(P.stellesbarre) + "</p>" },
       { area: "Geometria", html:
-        "<p><strong>Teorema di Pick</strong> per contare i punti interni: \\(I=A-\\dfrac{B}{2}+1\\).</p>" +
-        "<p><strong>Raggio inscritto.</strong> In un triangolo rettangolo \\(r=\\dfrac{a+b-c}{2}=\\dfrac{\\text{Area}}{s}\\).</p>" +
-        "<p><strong>Diagonali.</strong> In un poligono convesso (diagonali in posizione generica) i punti d'intersezione interni sono \\(\\binom{n}{4}\\).</p>" },
+        "<p><strong>Teorema di Pick</strong> per contare i punti interni: \\(I=A-\\dfrac{B}{2}+1\\)." + pf(P.pick) + "</p>" +
+        "<p><strong>Raggio inscritto.</strong> In un triangolo rettangolo \\(r=\\dfrac{a+b-c}{2}=\\dfrac{\\text{Area}}{s}\\)." + pf(P.raggioinscritto) + "</p>" +
+        "<p><strong>Diagonali.</strong> In un poligono convesso (diagonali in posizione generica) i punti d'intersezione interni sono \\(\\binom{n}{4}\\)." + pf(P.binomiale) + "</p>" },
       { area: "Algebra e logica", html:
-        "<p><strong>Viète sulle potenze.</strong> \\(r_1^3+r_2^3=(r_1+r_2)^3-3r_1 r_2(r_1+r_2)=S^3-3PS\\).</p>" +
-        "<p><strong>Ricorrenze lineari.</strong> Da \\(a_{n+1}=2a_n+1\\): posto \\(b_n=a_n+1\\) si ha \\(b_{n+1}=2b_n\\).</p>" +
-        "<p><strong>Somma dei cubi.</strong> \\(1^3+2^3+\\cdots+n^3=\\left(\\dfrac{n(n+1)}{2}\\right)^2\\).</p>" }
+        "<p><strong>Viète sulle potenze.</strong> \\(r_1^3+r_2^3=(r_1+r_2)^3-3r_1 r_2(r_1+r_2)=S^3-3PS\\)." + pf(P.viete) + "</p>" +
+        "<p><strong>Ricorrenze lineari.</strong> Da \\(a_{n+1}=2a_n+1\\): posto \\(b_n=a_n+1\\) si ha \\(b_{n+1}=2b_n\\)." + pf(P.ricorrenze) + "</p>" +
+        "<p><strong>Somma dei cubi.</strong> \\(1^3+2^3+\\cdots+n^3=\\left(\\dfrac{n(n+1)}{2}\\right)^2\\)." + pf(P.sommecubi) + "</p>" }
     ],
     superesperto: [
       { area: "Teoria dei numeri", html:
-        "<p><strong>Teorema di Eulero.</strong> Se \\(\\operatorname{MCD}(a,m)=1\\), \\(a^{\\varphi(m)}\\equiv 1 \\pmod m\\); la <strong>funzione di Eulero</strong> \\(\\varphi(m)\\) conta gli interi da \\(1\\) a \\(m\\) coprimi con \\(m\\).</p>" +
-        "<p><strong>Teorema di Wilson.</strong> Se \\(p\\) è primo, \\((p-1)!\\equiv -1 \\pmod p\\).</p>" +
-        "<p><strong>Ultime tre cifre.</strong> Sono il resto modulo 1000: per le basi coprime con 1000 la periodicità delle potenze ha periodo divisore di 100.</p>" },
+        "<p><strong>Teorema di Eulero.</strong> Se \\(\\operatorname{MCD}(a,m)=1\\), \\(a^{\\varphi(m)}\\equiv 1 \\pmod m\\)" + pf(P.eulero) + "; la <strong>funzione di Eulero</strong> \\(\\varphi(m)\\) conta gli interi da \\(1\\) a \\(m\\) coprimi con \\(m\\)." + pf(P.eulerophi) + "</p>" +
+        "<p><strong>Teorema di Wilson.</strong> Se \\(p\\) è primo, \\((p-1)!\\equiv -1 \\pmod p\\)." + pf(P.wilson) + "</p>" +
+        "<p><strong>Ultime tre cifre.</strong> Sono il resto modulo 1000: per le basi coprime con 1000 la periodicità delle potenze ha periodo divisore di 100." + pf(P.congruenza) + "</p>" },
       { area: "Combinatoria e probabilità", html:
-        "<p><strong>Numeri di Catalan.</strong> \\(C_n=\\dfrac{1}{n+1}\\dbinom{2n}{n}\\): contano accoppiamenti non intersecanti, parentesi ben formate, triangolazioni.</p>" +
-        "<p><strong>Fibonacci.</strong> I sottoinsiemi di \\(\\{1,\\dots,n\\}\\) senza due elementi consecutivi sono \\(F_{n+2}\\).</p>" +
-        "<p>Le dismutazioni valgono circa \\(n!/e\\).</p>" },
+        "<p><strong>Numeri di Catalan.</strong> \\(C_n=\\dfrac{1}{n+1}\\dbinom{2n}{n}\\): contano accoppiamenti non intersecanti, parentesi ben formate, triangolazioni." + pf(P.catalan) + "</p>" +
+        "<p><strong>Fibonacci.</strong> I sottoinsiemi di \\(\\{1,\\dots,n\\}\\) senza due elementi consecutivi sono \\(F_{n+2}\\)." + pf(P.fibonacci) + "</p>" +
+        "<p>Le dismutazioni valgono circa \\(n!/e\\)." + pf(P.dismutazioni) + "</p>" },
       { area: "Geometria", html:
-        "<p><strong>Teorema delle corde</strong> (potenza di un punto): se due corde si incontrano, \\(PA\\cdot PB = PC\\cdot PD\\).</p>" +
-        "<p><strong>Diagonale nello spazio.</strong> Per un parallelepipedo di spigoli \\(a,b,c\\): \\(d^2=a^2+b^2+c^2\\).</p>" +
-        "<p><strong>Solidi simili.</strong> Con rapporto \\(k\\), le aree stanno come \\(k^2\\) e i volumi come \\(k^3\\).</p>" },
+        "<p><strong>Teorema delle corde</strong> (potenza di un punto): se due corde si incontrano, \\(PA\\cdot PB = PC\\cdot PD\\)." + pf(P.corde) + "</p>" +
+        "<p><strong>Diagonale nello spazio.</strong> Per un parallelepipedo di spigoli \\(a,b,c\\): \\(d^2=a^2+b^2+c^2\\)." + pf(P.diagonalespazio) + "</p>" +
+        "<p><strong>Solidi simili.</strong> Con rapporto \\(k\\), le aree stanno come \\(k^2\\) e i volumi come \\(k^3\\)." + pf(P.similitudine) + "</p>" },
       { area: "Algebra e logica", html:
-        "<p><strong>Differenza di quadrati.</strong> \\(x^2-y^2=(x-y)(x+y)\\): le soluzioni intere corrispondono alle fattorizzazioni con fattori della stessa parità.</p>" +
-        "<p><strong>Somme miste.</strong> \\(\\sum_{i=1}^{n} i\\,2^{i}=(n-1)2^{\\,n+1}+2\\) (si ricava da \\(2S-S\\)).</p>" +
-        "<p><strong>Ricorrenze con punto fisso.</strong> Da \\(a_{n+1}=3a_n-2\\): il punto fisso è \\(1\\) e \\(a_n-1=(a_1-1)3^{\\,n-1}\\).</p>" }
+        "<p><strong>Differenza di quadrati.</strong> \\(x^2-y^2=(x-y)(x+y)\\): le soluzioni intere corrispondono alle fattorizzazioni con fattori della stessa parità." + pf(P.prodottinotevoli) + "</p>" +
+        "<p><strong>Somme miste.</strong> \\(\\sum_{i=1}^{n} i\\,2^{i}=(n-1)2^{\\,n+1}+2\\) (si ricava da \\(2S-S\\))." + pf(P.sommemiste) + "</p>" +
+        "<p><strong>Ricorrenze con punto fisso.</strong> Da \\(a_{n+1}=3a_n-2\\): il punto fisso è \\(1\\) e \\(a_n-1=(a_1-1)3^{\\,n-1}\\)." + pf(P.ricorrenze) + "</p>" }
     ]
   };
   function buildTeoria() {
