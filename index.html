@@ -216,6 +216,7 @@ input[type="range"]{accent-color:var(--accent); width:100%}
     <button class="tab" role="tab" id="tab-sim" aria-controls="p-sim" aria-selected="false" tabindex="-1">Simulazione</button>
     <button class="tab" role="tab" id="tab-pratica" aria-controls="p-pratica" aria-selected="false" tabindex="-1">Pratica interattiva</button>
     <button class="tab" role="tab" id="tab-quiz" aria-controls="p-quiz" aria-selected="false" tabindex="-1">Quiz</button>
+    <button class="tab" role="tab" id="tab-disfida" aria-controls="p-disfida" aria-selected="false" tabindex="-1">Gara a squadre</button>
   </div>
 
   <!-- ================= TEORIA ================= -->
@@ -379,6 +380,34 @@ input[type="range"]{accent-color:var(--accent); width:100%}
     </div>
   </section>
 
+  <section class="panel" id="p-disfida" role="tabpanel" aria-labelledby="tab-disfida" tabindex="0">
+    <div class="card">
+      <p class="lead" style="margin:0 0 .5rem">La <strong>Disfida «Urbi et Orbi»</strong> è una gara a squadre: quesiti a <strong>sola risposta numerica</strong>, di solito più difficili dei Giochi di Archimede. Qui ti alleni in quello stile con problemi originali sempre nuovi.</p>
+      <p class="lead" style="margin:0">In gara non ci sono penalità: rispondi a tutto, incassa presto i quesiti "meccanici" e lascia per ultimi i costruttivi. Verifica ogni risultato con un metodo indipendente (casi piccoli, stima, un secondo conto).</p>
+    </div>
+    <div class="card">
+      <h2>Tecniche chiave</h2>
+      <ul class="pill-list tech">
+        <li><strong>Divisori e \(\sigma\).</strong> Numero di divisori \(\tau(N)=\prod(a_i+1)\), prodotto dei divisori \(N^{\tau/2}\), somma \(\sigma\) moltiplicativa. <a class="proof" href="https://it.wikipedia.org/wiki/Funzione_sigma" target="_blank" rel="noopener">spiegazione</a></li>
+        <li><strong>Congruenze e piccolo Fermat.</strong> \(a^{p-1}\equiv 1 \pmod p\): riduci gli esponenti modulo \(p-1\). <a class="proof" href="https://it.wikipedia.org/wiki/Piccolo_teorema_di_Fermat" target="_blank" rel="noopener">spiegazione</a></li>
+        <li><strong>Conteggio.</strong> Coefficiente binomiale, «stelle e sbarre», dismutazioni, percorsi su griglia. <a class="proof" href="https://it.wikipedia.org/wiki/Coefficiente_binomiale" target="_blank" rel="noopener">spiegazione</a></li>
+        <li><strong>Geometria metrica.</strong> Incerchio \(r=\text{Area}/s\), potenza di un punto, teorema di Pick. <a class="proof" href="https://it.wikipedia.org/wiki/Teorema_di_Pick" target="_blank" rel="noopener">spiegazione</a></li>
+        <li><strong>Telescopia e ricorrenze.</strong> Somme che si annullano a catena; successioni definite per ricorrenza. <a class="proof" href="https://it.wikipedia.org/wiki/Relazione_di_ricorrenza" target="_blank" rel="noopener">spiegazione</a></li>
+        <li><strong>Giochi.</strong> Posizioni vincenti e perdenti, strategie di simmetria (Sprague–Grundy). <a class="proof" href="https://it.wikipedia.org/wiki/Gioco_del_Nim" target="_blank" rel="noopener">spiegazione</a></li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="toolbar">
+        <div class="seg">
+          <button id="disfida-new" class="btn btn-primary" type="button">Genera nuova gara</button>
+          <button id="disfida-check" class="btn" type="button">Correggi tutta la gara</button>
+        </div>
+        <div class="seg"><span class="seg-label">Tempo</span><span id="disfida-timer" class="mono">00:00</span><span id="disfida-score" class="mono" style="margin-left:.8rem;font-weight:600;color:var(--accent)"></span></div>
+      </div>
+    </div>
+    <div id="disfida-list"></div>
+  </section>
+
   <p class="foot">Olimpiadi di Matematica · <span class="mono">olimpiadi.ventilii.ai</span></p>
 </main>
 
@@ -438,7 +467,7 @@ input[type="range"]{accent-color:var(--accent); width:100%}
 
   /* ---------- Tabs ---------- */
   var tabs = Array.prototype.slice.call(document.querySelectorAll('.tabs .tab'));
-  var panels = { "tab-teoria": "p-teoria", "tab-sim": "p-sim", "tab-pratica": "p-pratica", "tab-quiz": "p-quiz" };
+  var panels = { "tab-teoria": "p-teoria", "tab-sim": "p-sim", "tab-pratica": "p-pratica", "tab-quiz": "p-quiz", "tab-disfida": "p-disfida" };
   function selectTab(tab) {
     tabs.forEach(function (t) {
       var on = t === tab;
@@ -1924,11 +1953,186 @@ if (typeof module !== "undefined" && module.exports) {
   document.getElementById("r-restart").addEventListener("click", function () { resetQuiz(); });
 
   /* ---------- init ---------- */
+  /* ================= GARA A SQUADRE (Disfida) ================= */
+  function isqrtInt(n){var r=Math.floor(Math.sqrt(n));while(r*r>n)r--;while((r+1)*(r+1)<=n)r++;return r;}
+  function sigmaDiv(n){var s=0;for(var i=1;i*i<=n;i++){if(n%i===0){s+=i;if(i!==n/i)s+=n/i;}}return s;}
+  function derange(n){var d=[1,0];for(var i=2;i<=n;i++)d.push((i-1)*(d[i-1]+d[i-2]));return d[n];}
+  var PYTH=[[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29],[9,40,41],[12,35,37],[6,8,10],[9,12,15],[10,24,26]];
+  var HERON=[];
+  (function(){
+    for(var a=2;a<=30;a++)for(var b=a;b<=30;b++)for(var c=b;c<a+b&&c<=30;c++){
+      var s2=a+b+c; if(s2%2)continue; var s=s2/2; var A2=s*(s-a)*(s-b)*(s-c);
+      var A=Math.round(Math.sqrt(A2)); if(A>0&&A*A===A2&&gcd(gcd(a,b),c)===1) HERON.push([a,b,c,A]);
+    }
+  })();
+  var DISF=[
+{id:"divroot",area:"Teoria dei numeri",gen:function(){
+  var N; do{ N=Math.pow(2,randInt(1,4))*Math.pow(3,randInt(0,3))*Math.pow(5,randInt(0,2))*choice([7,11,13,17,19,23])*choice([1,1,7,11,13]); }while(N<5000||N>3000000);
+  var r=isqrtInt(N),lo=0;
+  for(var d=1;d<=r;d++) if(N%d===0) lo=d;
+  var ans=N/lo;
+  return {text:"Qual è il più piccolo divisore di \\("+N+"\\) che supera la sua radice quadrata?",
+    answer:ans,
+    solution:"I divisori si accoppiano attorno a \\(\\sqrt{"+N+"}\\approx"+r+"\\): il più grande divisore \\(\\le\\sqrt N\\) è \\("+lo+"\\), quindi il più piccolo che la supera è \\("+N+"/"+lo+"="+ans+"\\)."};
+}},
+{id:"zerifact",area:"Teoria dei numeri",gen:function(){
+  var n=randInt(120,900); var ans=trailingZeros(n);
+  return {text:"Con quanti zeri termina \\("+n+"!\\,\\)?",
+    answer:ans,
+    solution:"Gli zeri contano i fattori \\(5\\): \\(\\left\\lfloor "+n+"/5\\right\\rfloor+\\left\\lfloor "+n+"/25\\right\\rfloor+\\left\\lfloor "+n+"/125\\right\\rfloor+\\cdots="+ans+"\\)."};
+}},
+{id:"mod1000",area:"Teoria dei numeri",gen:function(){
+  var a=choice([3,7,9,11,13,17,21,23,27,29]); var n=randInt(60,400);
+  var ans=modpow(a,n,1000);
+  return {text:"Qual è il numero formato dalle ultime tre cifre di \\("+a+"^{"+n+"}\\)? (senza zeri iniziali, cioè il resto della divisione per \\(1000\\))",
+    answer:ans,
+    solution:"Le potenze di \\("+a+"\\) modulo \\(1000\\) sono periodiche; riducendo l'esponente si ottiene \\("+a+"^{"+n+"}\\equiv "+ans+"\\pmod{1000}\\)."};
+}},
+{id:"sigma",area:"Teoria dei numeri",gen:function(){
+  var p=choice([2,3,5]),q=choice([3,5,7,11].filter(function(x){return x!==p;}));
+  var a=randInt(2,4),b=randInt(1,3); var N=Math.pow(p,a)*Math.pow(q,b);
+  var ans=sigmaDiv(N);
+  return {text:"Quanto vale la somma di tutti i divisori positivi di \\("+N+"=" +p+"^{"+a+"}\\cdot "+q+"^{"+b+"}\\) (compresi \\(1\\) e \\("+N+"\\))?",
+    answer:ans,
+    solution:"\\(\\sigma\\) è moltiplicativa: \\(\\sigma("+N+")=\\dfrac{"+p+"^{"+(a+1)+"}-1}{"+p+"-1}\\cdot\\dfrac{"+q+"^{"+(b+1)+"}-1}{"+q+"-1}="+ans+"\\)."};
+}},
+{id:"stars",area:"Combinatoria e probabilità",gen:function(){
+  var n=randInt(6,14),k=randInt(3,5); var ans=nCr(n+k-1,k-1);
+  return {text:"In quanti modi si distribuiscono \\("+n+"\\) caramelle identiche fra \\("+k+"\\) bambini (anche nessuna a qualcuno)?",
+    answer:ans,
+    solution:"«Stelle e sbarre»: \\(\\binom{"+n+"+"+k+"-1}{"+k+"-1}=\\binom{"+(n+k-1)+"}{"+(k-1)+"}="+ans+"\\)."};
+}},
+{id:"paths",area:"Combinatoria e probabilità",gen:function(){
+  var a=randInt(3,7),b=randInt(3,7); var ans=nCr(a+b,a);
+  return {text:"Quanti percorsi minimi vanno da \\((0,0)\\) a \\(("+a+","+b+")\\) con passi unitari verso destra o verso l'alto?",
+    answer:ans,
+    solution:"Serve scegliere quali degli \\("+(a+b)+"\\) passi vanno a destra: \\(\\binom{"+(a+b)+"}{"+a+"}="+ans+"\\)."};
+}},
+{id:"derange",area:"Combinatoria e probabilità",gen:function(){
+  var n=randInt(4,8); var ans=derange(n);
+  return {text:"In quanti modi \\("+n+"\\) persone possono riprendere un cappello ciascuna in modo che nessuna riprenda il proprio?",
+    answer:ans,
+    solution:"Sono le dismutazioni \\(D_{"+n+"}=(n-1)(D_{n-1}+D_{n-2})="+ans+"\\)."};
+}},
+{id:"nim",area:"Combinatoria e probabilità",gen:function(){
+  var k=randInt(3,6); var n=randInt(20,80);
+  // misère "remove 1..k, chi prende l'ultima perde": P-positions n ≡ 1 (mod k+1)
+  var m=k+1; var t=((n-1)%m); var ans=(t>=1&&t<=k)?t:0;
+  return {text:"Un mucchio ha \\("+n+"\\) gettoni; a turno si tolgono da \\(1\\) a \\("+k+"\\) gettoni e <b>perde chi prende l'ultimo</b>. Quanti gettoni deve togliere il primo giocatore per garantirsi la vittoria? (\\(0\\) se non può vincere)",
+    answer:ans,
+    solution: (ans===0
+      ? "\\("+n+"\\equiv 1\\pmod{"+m+"}\\): la posizione è perdente per chi muove, quindi la risposta è \\(0\\)."
+      : "Le posizioni perdenti sono \\(\\equiv 1\\pmod{"+m+"}\\); togliendo \\("+ans+"\\) si lascia all'avversario \\("+(n-ans)+"\\equiv 1\\pmod{"+m+"}\\).")};
+}},
+{id:"heron",area:"Geometria",gen:function(){
+  var t=choice(HERON); var a=t[0],b=t[1],c=t[2],A=t[3];
+  return {text:"Qual è l'area di un triangolo di lati \\("+a+"\\), \\("+b+"\\) e \\("+c+"\\)?",
+    answer:A,
+    solution:"Per Erone con \\(s=\\dfrac{"+a+"+"+b+"+"+c+"}{2}="+((a+b+c)/2)+"\\): \\(A=\\sqrt{s(s-a)(s-b)(s-c)}="+A+"\\)."};
+}},
+{id:"inradius",area:"Geometria",gen:function(){
+  var t=choice(PYTH),s=randInt(1,4); var a=t[0]*s,b=t[1]*s,c=t[2]*s;
+  var ans=(a+b-c)/2;
+  return {text:"Un triangolo rettangolo ha cateti \\("+a+"\\) e \\("+b+"\\) (ipotenusa \\("+c+"\\)). Qual è il raggio del cerchio inscritto?",
+    answer:ans,
+    solution:"In un triangolo rettangolo \\(r=\\dfrac{a+b-c}{2}=\\dfrac{"+a+"+"+b+"-"+c+"}{2}="+ans+"\\)."};
+}},
+{id:"pick",area:"Geometria",gen:function(){
+  // random lattice triangle with a nice interior count
+  var ax,ay,bx,by,cx,cy,A2,B,I,tries=0;
+  do{
+    ax=0;ay=0;bx=randInt(4,10);by=randInt(0,3);cx=randInt(0,3);cy=randInt(4,10);
+    A2=Math.abs(bx*cy-cx*by); // twice area
+    B=gcd(Math.abs(bx-ax),Math.abs(by-ay))+gcd(Math.abs(cx-bx),Math.abs(cy-by))+gcd(Math.abs(ax-cx),Math.abs(ay-cy));
+    I=(A2 - B + 2)/2; tries++;
+  }while((I<3||I>40||A2%1!==0)&&tries<200);
+  return {text:"Un triangolo ha vertici \\((0,0)\\), \\(("+bx+","+by+")\\) e \\(("+cx+","+cy+")\\). Quanti punti a coordinate intere sono strettamente interni al triangolo?",
+    answer:I,
+    solution:"Con l'area \\(A=\\tfrac12\\cdot"+A2+"="+(A2/2)+"\\) e i punti sul bordo \\(B="+B+"\\), il teorema di Pick dà \\(I=A-\\tfrac{B}{2}+1="+I+"\\)."};
+}},
+{id:"viete",area:"Algebra e logica",gen:function(){
+  var r1=randInt(2,9),r2=randInt(2,9); var S=r1+r2,P=r1*r2; var ans=S*S-2*P;
+  return {text:"Le radici di \\(x^2-"+S+"x+"+P+"=0\\) sono \\(r_1,r_2\\). Quanto vale \\(r_1^2+r_2^2\\)?",
+    answer:ans,
+    solution:"Per Viète \\(r_1+r_2="+S+"\\), \\(r_1 r_2="+P+"\\), quindi \\(r_1^2+r_2^2=("+S+")^2-2\\cdot"+P+"="+ans+"\\)."};
+}},
+{id:"polydiv",area:"Algebra e logica",gen:function(){
+  var m=choice([7,11,13]); var x0=1,x1=1+m; var v0=randInt(5,m+4);
+  var r=((v0%m)+m)%m; var lo=100,hi=999,c=0;
+  for(var k=lo;k<=hi;k++) if(((k-v0)%m+m)%m===0) c++;
+  return {text:"Per quanti interi \\(k\\) di \\(3\\) cifre esiste un polinomio \\(P\\) a coefficienti interi con \\(P("+x0+")="+v0+"\\) e \\(P("+x1+")=k\\)?",
+    answer:c,
+    solution:"Poiché \\(("+x1+"-"+x0+")\\mid P("+x1+")-P("+x0+")\\), serve \\(k\\equiv "+v0+"\\pmod{"+m+"}\\); i \\(k\\) di \\(3\\) cifre con questo resto sono \\("+c+"\\)."};
+}},
+{id:"xinv",area:"Algebra e logica",gen:function(){
+  var k=randInt(3,9); var ans=k*k*k-3*k;
+  return {text:"Se \\(x+\\dfrac1x="+k+"\\), quanto vale \\(x^3+\\dfrac1{x^3}\\)?",
+    answer:ans,
+    solution:"\\(x^3+\\dfrac1{x^3}=\\left(x+\\dfrac1x\\right)^3-3\\left(x+\\dfrac1x\\right)="+k+"^3-3\\cdot"+k+"="+ans+"\\)."};
+}}
+];
+
+  var disfCards=[], disfTimer=null, disfStart=0;
+  function disfFmt(ms){var t=Math.floor(ms/1000);return ("0"+Math.floor(t/60)).slice(-2)+":"+("0"+(t%60)).slice(-2);}
+  function disfStopTimer(){ if(disfTimer){clearInterval(disfTimer);disfTimer=null;} }
+  function disfStartTimer(){ disfStart=Date.now(); disfStopTimer(); var el=document.getElementById("disfida-timer"); if(!el)return; el.textContent="00:00"; disfTimer=setInterval(function(){el.textContent=disfFmt(Date.now()-disfStart);},1000); }
+  function makeDisfCard(inst,num,area){
+    var card=document.createElement("div"); card.className="card";
+    card.innerHTML =
+      '<span class="area-tag">'+area+'</span>'+
+      '<p style="font-size:1.05rem"><strong>Problema '+num+'.</strong> '+inst.text+'</p>'+
+      '<div class="answer-row">'+
+        '<input type="number" step="any" inputmode="decimal" aria-label="La tua risposta" placeholder="Risposta">'+
+        '<button class="btn btn-primary" data-act="check" type="button">Verifica</button>'+
+        '<button class="btn btn-ghost" data-act="sol" type="button">'+ICON_EYE+' Soluzione</button>'+
+      '</div>'+
+      '<div data-fb></div>'+
+      '<div class="solution" data-sol hidden><strong>Soluzione.</strong> '+inst.solution+'</div>';
+    var input=card.querySelector("input"), fb=card.querySelector("[data-fb]"), solBox=card.querySelector("[data-sol]");
+    function check(reveal){
+      var raw=input.value.trim().replace(",",".");
+      var ok=false;
+      if(raw!==""){ var v=parseFloat(raw); ok=isFinite(v)&&Math.abs(v-inst.answer)<=1e-6; }
+      fb.innerHTML = raw==="" ? '<div class="fb">Nessuna risposta.</div>'
+        : (ok?'<div class="fb correct">'+ICON_CHECK+' Esatto!</div>':'<div class="fb incorrect">'+ICON_CROSS+' Non corretto.</div>');
+      if(reveal) solBox.hidden=false;
+      typeset(fb);
+      return ok;
+    }
+    card.querySelector('[data-act="check"]').addEventListener("click",function(){check(false);});
+    input.addEventListener("keydown",function(e){if(e.key==="Enter")check(false);});
+    card.querySelector('[data-act="sol"]').addEventListener("click",function(){solBox.hidden=!solBox.hidden;});
+    return {card:card, check:check};
+  }
+  function buildDisfida(startTimer){
+    var wrap=document.getElementById("disfida-list"); if(!wrap)return;
+    wrap.innerHTML="";
+    var byArea={}; DISF.forEach(function(g){(byArea[g.area]=byArea[g.area]||[]).push(g);});
+    var chosen=[]; AREAS.forEach(function(ar){ sample(byArea[ar]||[],2).forEach(function(g){chosen.push(g);}); });
+    chosen=shuffle(chosen);
+    disfCards=[];
+    chosen.forEach(function(g,i){ var inst=g.gen(); var mc=makeDisfCard(inst,i+1,g.area); wrap.appendChild(mc.card); disfCards.push(mc); });
+    var sc=document.getElementById("disfida-score"); if(sc) sc.textContent="";
+    if(startTimer){ disfStartTimer(); } else { disfStopTimer(); disfStart=0; var el=document.getElementById("disfida-timer"); if(el) el.textContent="00:00"; }
+    typeset(wrap);
+  }
+  function checkAllDisf(){
+    if(!disfCards.length) return;
+    var ok=0; disfCards.forEach(function(mc){ if(mc.check(true)) ok++; });
+    disfStopTimer();
+    var sc=document.getElementById("disfida-score");
+    if(sc) sc.textContent="Punteggio "+ok+"/"+disfCards.length+(disfStart?(" · tempo "+disfFmt(Date.now()-disfStart)):"");
+    typeset(document.getElementById("disfida-list"));
+  }
+
   document.getElementById("teoria-levelbar").appendChild(makeLevelSelector());
   document.getElementById("sim-levelbar").appendChild(makeLevelSelector());
   document.getElementById("pratica-levelbar").appendChild(makeLevelSelector());
   document.getElementById("quiz-levelbar").appendChild(makeLevelSelector());
   document.getElementById("pratica-refresh").addEventListener("click", function () { buildPratica(); typeset(document.getElementById("pratica-list")); });
+  var _dn=document.getElementById("disfida-new"); if(_dn) _dn.addEventListener("click", function(){ buildDisfida(true); });
+  var _dc=document.getElementById("disfida-check"); if(_dc) _dc.addEventListener("click", checkAllDisf);
+  buildDisfida(false);
   renderLevelSelectors();
   buildTeoria();
   buildPratica();
