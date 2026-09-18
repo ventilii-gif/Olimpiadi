@@ -1969,6 +1969,9 @@ if (typeof module !== "undefined" && module.exports) {
   var QUAD=[];(function(){for(var a=1;a<=20;a++)for(var b=a;b<=20;b++)for(var c=b;c<=25;c++){var d2=a*a+b*b+c*c,d=Math.round(Math.sqrt(d2));if(d*d===d2&&d<=30)QUAD.push([a,b,c,d]);}})();
   var WORDS=["OTTO","AMACA","PIZZA","MAMMA","BANANA","ANANAS","PATATA","RAGAZZA","CASSA","NONNA","TESSERE","GATTO"];
   var POLYN=[5,6,8,9,10,12,15,18,20,24,30,36];
+  function fibN(n){var a=1,b=1;for(var i=3;i<=n;i++){var c=a+b;a=b;b=c;}return n<=2?1:b;}
+  function orderMod(a,m){var x=1%m;for(var d=1;d<=m;d++){x=(x*a)%m;if(x===1)return d;}return 0;}
+  var MEDTRI=[];(function(){for(var a=3;a<=25;a++)for(var b=a;b<=25;b++)for(var c=2;c<a+b&&c<=25;c++){if(c<=Math.abs(a-b))continue;var q=2*a*a+2*b*b-c*c;if(q<=0)continue;var m2=q/4;var m=Math.round(Math.sqrt(m2));if(m>0&&m*m===m2)MEDTRI.push([a,b,c,m]);}})();
   var DISF=[
 {id:"divroot",area:"Teoria dei numeri",gen:function(){
   var N; do{ N=Math.pow(2,randInt(1,4))*Math.pow(3,randInt(0,3))*Math.pow(5,randInt(0,2))*choice([7,11,13,17,19,23])*choice([1,1,7,11,13]); }while(N<5000||N>3000000);
@@ -2165,6 +2168,91 @@ if (typeof module !== "undefined" && module.exports) {
   return {text:"Le radici di \\(x^2-"+S+"x+"+P+"=0\\) sono \\(r_1,r_2\\). Quanto vale \\(r_1^3+r_2^3\\)?",
     answer:ans,
     solution:"\\(r_1^3+r_2^3=(r_1+r_2)^3-3r_1 r_2(r_1+r_2)="+S+"^3-3\\cdot"+P+"\\cdot"+S+"="+ans+"\\)."};
+}}
+,
+{id:"legendre",area:"Teoria dei numeri",gen:function(){
+  var p=choice([2,3,5,7]); var n=randInt(50,300);
+  var ans=0,pk=p; while(pk<=n){ans+=Math.floor(n/pk);pk*=p;}
+  var terms=[],pk2=p; while(pk2<=n){terms.push("\\left\\lfloor "+n+"/"+pk2+"\\right\\rfloor");pk2*=p;}
+  return {text:"Qual è l'esponente del primo \\("+p+"\\) nella fattorizzazione di \\("+n+"!\\,\\)?",
+    answer:ans,
+    solution:"Per la formula di Legendre: \\("+terms.join("+")+"="+ans+"\\)."};
+}},
+{id:"order",area:"Teoria dei numeri",gen:function(){
+  var m=choice([7,9,11,13,14,15,16,17,18,19]); var a; do{a=randInt(2,m-1);}while(gcd(a,m)!==1);
+  var ans=orderMod(a,m);
+  return {text:"Qual è l'ordine moltiplicativo di \\("+a+"\\) modulo \\("+m+"\\), cioè il più piccolo \\(d>0\\) con \\("+a+"^d\\equiv 1\\pmod{"+m+"}\\)?",
+    answer:ans,
+    solution:"Calcolando \\("+a+"^1,"+a+"^2,\\dots\\pmod{"+m+"}\\) la prima potenza uguale a \\(1\\) si ha per \\(d="+ans+"\\) (che divide \\(\\varphi("+m+")\\))."};
+}},
+{id:"numdiv",area:"Teoria dei numeri",gen:function(){
+  var pr=[2,3,5,7,11]; var p=choice(pr),q=choice(pr.filter(function(x){return x!==p;}));
+  var a=randInt(2,5),b=randInt(1,3); var N=Math.pow(p,a)*Math.pow(q,b); var ans=(a+1)*(b+1);
+  return {text:"Quanti divisori positivi ha \\(N="+p+"^{"+a+"}\\cdot "+q+"^{"+b+"}="+N+"\\)?",
+    answer:ans,
+    solution:"Il numero di divisori è \\((a+1)(b+1)=("+a+"+1)("+b+"+1)="+ans+"\\)."};
+}},
+{id:"fibonacci",area:"Combinatoria e probabilità",gen:function(){
+  var n=randInt(5,13); var ans=fibN(n+2);
+  return {text:"Quanti sottoinsiemi di \\(\\{1,2,\\dots,"+n+"\\}\\) non contengono due interi consecutivi (l'insieme vuoto conta)?",
+    answer:ans,
+    solution:"Sono i numeri di Fibonacci: \\(F_{"+n+"+2}=F_{"+(n+2)+"}="+ans+"\\)."};
+}},
+{id:"pigeon",area:"Combinatoria e probabilità",gen:function(){
+  var k=randInt(3,8),r=randInt(2,5); var ans=k*(r-1)+1;
+  return {text:"Qual è il minimo numero di palline da distribuire in \\("+k+"\\) scatole per essere certi che almeno una scatola ne contenga almeno \\("+r+"\\)?",
+    answer:ans,
+    solution:"Con \\("+k+"\\cdot("+r+"-1)="+(k*(r-1))+"\\) palline si può evitare (mettendone \\("+(r-1)+"\\) per scatola); una in più forza il risultato: \\("+k+"("+r+"-1)+1="+ans+"\\)."};
+}},
+{id:"binom",area:"Combinatoria e probabilità",gen:function(){
+  var n=randInt(6,14),k=randInt(2,4); if(k>n-2)k=2; var ans=nCr(n,k);
+  return {text:"In quanti modi si possono scegliere \\("+k+"\\) oggetti fra \\("+n+"\\) (senza tener conto dell'ordine)?",
+    answer:ans,
+    solution:"Combinazioni semplici: \\(\\binom{"+n+"}{"+k+"}="+ans+"\\)."};
+}},
+{id:"median",area:"Geometria",gen:function(){
+  var t=choice(MEDTRI); var a=t[0],b=t[1],c=t[2],m=t[3];
+  return {text:"In un triangolo di lati \\("+a+"\\), \\("+b+"\\) e \\("+c+"\\), quanto misura la mediana relativa al lato \\("+c+"\\) (che risulta intera)?",
+    answer:m,
+    solution:"Con la formula della mediana \\(m_c=\\tfrac12\\sqrt{2a^2+2b^2-c^2}=\\tfrac12\\sqrt{2\\cdot"+a+"^2+2\\cdot"+b+"^2-"+c+"^2}="+m+"\\)."};
+}},
+{id:"power",area:"Geometria",gen:function(){
+  var x,y,z,pd;
+  do{ x=randInt(3,18); y=randInt(3,18); z=randInt(2,18); }while((x*y)%z!==0 || (x*y/z)<2 || (x*y/z)>40);
+  pd=x*y/z;
+  return {text:"Due corde di una circonferenza si incontrano in un punto \\(P\\). La prima corda è divisa da \\(P\\) nei segmenti \\(PA="+x+"\\) e \\(PB="+y+"\\); della seconda si sa che \\(PC="+z+"\\). Quanto vale \\(PD\\)?",
+    answer:pd,
+    solution:"Per il teorema delle corde (potenza del punto) \\(PA\\cdot PB=PC\\cdot PD\\): \\(PD=\\dfrac{"+x+"\\cdot"+y+"}{"+z+"}="+pd+"\\)."};
+}},
+{id:"distsides",area:"Geometria",gen:function(){
+  var hs=[12,15,16,18,20,24,30,36]; var ha,hb,hc,db,dc,da,tries=0;
+  do{ ha=choice(hs); hb=choice(hs); hc=choice(hs); db=randInt(1,hb-1); dc=randInt(1,hc-1);
+      var val=ha*(1 - db/hb - dc/hc); da=Math.round(val*1e6)/1e6; tries++;
+  }while((!(da>0 && Math.abs(da-Math.round(da))<1e-9) )&&tries<4000);
+  da=Math.round(da);
+  return {text:"Le altezze di un triangolo relative ai lati \\(a,b,c\\) misurano rispettivamente \\("+ha+"\\), \\("+hb+"\\) e \\("+hc+"\\). Un punto interno dista \\("+db+"\\) dal lato \\(b\\) e \\("+dc+"\\) dal lato \\(c\\). Quanto dista dal lato \\(a\\)?",
+    answer:da,
+    solution:"Le tre aree ricompongono il triangolo: \\(\\dfrac{d_a}{"+ha+"}+\\dfrac{"+db+"}{"+hb+"}+\\dfrac{"+dc+"}{"+hc+"}=1\\Rightarrow d_a="+da+"\\)."};
+}},
+{id:"recur",area:"Algebra e logica",gen:function(){
+  var c=choice([2,3]),d=randInt(1,5),a1=randInt(1,5),k=randInt(4,7);
+  var v=a1; for(var i=2;i<=k;i++)v=c*v+d;
+  return {text:"La successione è definita da \\(a_1="+a1+"\\) e \\(a_{n+1}="+c+"a_n+"+d+"\\). Quanto vale \\(a_{"+k+"}\\)?",
+    answer:v,
+    solution:"Iterando (o col punto fisso \\(L=\\tfrac{"+d+"}{"+c+"-1}\\), \\(a_n-L=("+c+")^{\\,n-1}(a_1-L)\\)) si ottiene \\(a_{"+k+"}="+v+"\\)."};
+}},
+{id:"sumcubes",area:"Algebra e logica",gen:function(){
+  var n=randInt(4,20); var tri=n*(n+1)/2; var ans=tri*tri;
+  return {text:"Quanto vale \\(1^3+2^3+3^3+\\cdots+"+n+"^3\\)?",
+    answer:ans,
+    solution:"\\(\\sum_{k=1}^{"+n+"}k^3=\\left(\\dfrac{"+n+"\\cdot"+(n+1)+"}{2}\\right)^2="+tri+"^2="+ans+"\\)."};
+}},
+{id:"diffsquares",area:"Algebra e logica",gen:function(){
+  var N; do{ N=randInt(20,200); }while(N%4===2); // N≡2 mod4 non è differenza di quadrati
+  var cnt=0; for(var x=1;x<=N;x++){ var y2=x*x-N; if(y2<0) continue; var y=Math.round(Math.sqrt(y2)); if(y>=0 && y<x && y*y===y2) cnt++; }
+  return {text:"In quanti modi \\("+N+"\\) si può scrivere come differenza di due quadrati di interi \\(x^2-y^2\\) con \\(x>y\\ge 0\\)?",
+    answer:cnt,
+    solution:"\\(x^2-y^2=(x-y)(x+y)\\): ogni fattorizzazione \\("+N+"=d\\cdot e\\) con \\(d\\le e\\) e \\(d,e\\) della stessa parità dà una soluzione; sono \\("+cnt+"\\)."};
 }}
 ];
 
