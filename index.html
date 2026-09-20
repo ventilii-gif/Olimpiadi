@@ -402,6 +402,13 @@ input[type="range"]{accent-color:var(--accent); width:100%}
           <button id="disfida-new" class="btn btn-primary" type="button">Genera nuova gara</button>
           <button id="disfida-check" class="btn" type="button">Correggi tutta la gara</button>
         </div>
+        <div class="seg" role="group" aria-label="Difficoltà" id="disfida-difficolta">
+          <span class="seg-label">Difficoltà</span>
+          <button class="tab" type="button" data-dl="0" aria-selected="true">Tutti</button>
+          <button class="tab" type="button" data-dl="1" aria-selected="false">Base</button>
+          <button class="tab" type="button" data-dl="2" aria-selected="false">Intermedio</button>
+          <button class="tab" type="button" data-dl="3" aria-selected="false">Avanzato</button>
+        </div>
         <div class="seg"><span class="seg-label">Tempo</span><span id="disfida-timer" class="mono">00:00</span><span id="disfida-score" class="mono" style="margin-left:.8rem;font-weight:600;color:var(--accent)"></span></div>
       </div>
     </div>
@@ -2444,11 +2451,35 @@ if (typeof module !== "undefined" && module.exports) {
     card.querySelector('[data-act="sol"]').addEventListener("click",function(){solBox.hidden=!solBox.hidden;});
     return {card:card, check:check};
   }
+  // Difficoltà per generatore: 1=base, 2=intermedio, 3=avanzato (default 2)
+  var DIFF={
+    // Teoria dei numeri
+    divroot:1,digitroot:1,lastdigit:1,numdiv:1,sigma:1,aliquot:1,lcm3:1,coprimi:1,figurate:1,mod1000:1,digitsumbase:1,zerifact:1,
+    fermat:2,eulerth:2,wilson:2,order:2,quadres:2,conglin:2,legendre:2, crt:3,pisano:3,
+    // Combinatoria e probabilità
+    paths:1,nim:1,dicesum:1,pigeon:1,binom:1,compos:1,anagram:1,fibonacci:1,stars:1,
+    derange:2,catalan:2,inclexcl:2,necklace:2,nim2:2,probdraw:2,gridavoid:2,partint:2, stirling2:3,surj:3,fixed:3,dihedral:3,
+    // Geometria
+    heron:1,rhombus:1,trapezoid:1,polyangle:1,diagonals:1,inradius:1,circumR:1,boxsurf:1,prismtri:1,pyramid:1,cyltot:1,spacediag:1,solid:1,
+    chord:2,median:2,pick:2,quadarea:2,distsides:2,pointline:2,conelat:2,conetot:2,spherevol:2,frustum:2,eulerpoly:2,excircle:2,bisector:2, power:3,vanschooten:3,stewart:3,
+    // Algebra e logica
+    arithser:1,geomser:1,geomterm:1,sumsq:1,sumcubes:1,logint:1,means:1,fibid:1,cramer:1,
+    telescope:2,newton:2,remthm:2,polydiv:2,diffsquares:2,floorsum:2,recur:2,xinv:2, viete:3,vietecubi:3,ratroot:3
+  };
+  var disfLevel=0; // 0 = tutti
   function buildDisfida(startTimer){
     var wrap=document.getElementById("disfida-list"); if(!wrap)return;
     wrap.innerHTML="";
     var byArea={}; DISF.forEach(function(g){(byArea[g.area]=byArea[g.area]||[]).push(g);});
-    var chosen=[]; AREAS.forEach(function(ar){ sample(byArea[ar]||[],2).forEach(function(g){chosen.push(g);}); });
+    var chosen=[]; AREAS.forEach(function(ar){
+      var pool=byArea[ar]||[];
+      if(disfLevel){
+        var f=pool.filter(function(g){return (DIFF[g.id]||2)===disfLevel;});
+        if(f.length<2){ var rest=shuffle(pool.filter(function(g){return f.indexOf(g)<0;})); f=f.concat(rest); }
+        pool=f;
+      }
+      sample(pool,2).forEach(function(g){chosen.push(g);});
+    });
     chosen=shuffle(chosen);
     disfCards=[];
     chosen.forEach(function(g,i){ var inst=g.gen(); var mc=makeDisfCard(inst,i+1,g.area); wrap.appendChild(mc.card); disfCards.push(mc); });
@@ -2472,6 +2503,12 @@ if (typeof module !== "undefined" && module.exports) {
   document.getElementById("pratica-refresh").addEventListener("click", function () { buildPratica(); typeset(document.getElementById("pratica-list")); });
   var _dn=document.getElementById("disfida-new"); if(_dn) _dn.addEventListener("click", function(){ buildDisfida(true); });
   var _dc=document.getElementById("disfida-check"); if(_dc) _dc.addEventListener("click", checkAllDisf);
+  var _dd=document.getElementById("disfida-difficolta");
+  if(_dd){ Array.prototype.forEach.call(_dd.querySelectorAll("[data-dl]"),function(b){ b.addEventListener("click",function(){
+    disfLevel=parseInt(b.getAttribute("data-dl"),10)||0;
+    Array.prototype.forEach.call(_dd.querySelectorAll("[data-dl]"),function(x){x.setAttribute("aria-selected", x===b?"true":"false");});
+    buildDisfida(false);
+  }); }); }
   buildDisfida(false);
   renderLevelSelectors();
   buildTeoria();
