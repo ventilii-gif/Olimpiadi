@@ -193,6 +193,16 @@ input[type="range"]{accent-color:var(--accent); width:100%}
   .proof{white-space:nowrap;margin-left:.3rem;font-size:.8em;font-weight:600;text-decoration:none;color:var(--accent)}
   .proof:hover{text-decoration:underline}
   .proof::after{content:"\2197";margin-left:.12em;font-size:.92em;opacity:.75}
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.7rem;margin-top:.6rem}
+  .stat{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:.75rem .8rem;text-align:center}
+  .stat .num{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:1.5rem;font-weight:700;color:var(--accent);line-height:1.1}
+  .stat .lbl{font-size:.8rem;color:var(--muted);margin-top:.25rem}
+  .abar-row{display:grid;grid-template-columns:minmax(120px,1.4fr) 3fr auto;gap:.6rem;align-items:center;margin:.45rem 0}
+  .abar-lbl{font-size:.9rem}
+  .abar-track{background:var(--soft);border:1px solid var(--line);border-radius:999px;height:.72rem;overflow:hidden}
+  .abar-fill{height:100%;background:var(--accent);border-radius:999px}
+  .abar-val{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.82rem;color:var(--muted);white-space:nowrap}
+  @media(max-width:520px){.abar-row{grid-template-columns:1fr auto;grid-template-areas:"lbl val" "track track"}.abar-lbl{grid-area:lbl}.abar-val{grid-area:val;text-align:right}.abar-track{grid-area:track}}
 </style>
 </head>
 <body>
@@ -217,6 +227,7 @@ input[type="range"]{accent-color:var(--accent); width:100%}
     <button class="tab" role="tab" id="tab-pratica" aria-controls="p-pratica" aria-selected="false" tabindex="-1">Pratica interattiva</button>
     <button class="tab" role="tab" id="tab-quiz" aria-controls="p-quiz" aria-selected="false" tabindex="-1">Quiz</button>
     <button class="tab" role="tab" id="tab-disfida" aria-controls="p-disfida" aria-selected="false" tabindex="-1">Gara a squadre</button>
+    <button class="tab" role="tab" id="tab-progressi" aria-controls="p-progressi" aria-selected="false" tabindex="-1">Progressi</button>
   </div>
 
   <!-- ================= TEORIA ================= -->
@@ -415,6 +426,15 @@ input[type="range"]{accent-color:var(--accent); width:100%}
     <div id="disfida-list"></div>
   </section>
 
+  <section class="panel" id="p-progressi" role="tabpanel" aria-labelledby="tab-progressi" tabindex="0">
+    <div class="card">
+      <h2 style="margin-top:0">I tuoi progressi</h2>
+      <p style="color:var(--muted);font-size:.92rem;margin-top:.2rem">Le statistiche sono salvate solo su questo dispositivo (nel browser) e riassumono i tuoi tentativi in Pratica, Quiz e Gara a squadre.</p>
+      <div id="progress-body"></div>
+      <div style="margin-top:1.1rem"><button id="progress-reset" class="btn" type="button">Azzera i progressi</button></div>
+    </div>
+  </section>
+
   <p class="foot">Olimpiadi di Matematica · <span class="mono">olimpiadi.ventilii.ai</span></p>
 </main>
 
@@ -474,7 +494,7 @@ input[type="range"]{accent-color:var(--accent); width:100%}
 
   /* ---------- Tabs ---------- */
   var tabs = Array.prototype.slice.call(document.querySelectorAll('.tabs .tab'));
-  var panels = { "tab-teoria": "p-teoria", "tab-sim": "p-sim", "tab-pratica": "p-pratica", "tab-quiz": "p-quiz", "tab-disfida": "p-disfida" };
+  var panels = { "tab-teoria": "p-teoria", "tab-sim": "p-sim", "tab-pratica": "p-pratica", "tab-quiz": "p-quiz", "tab-disfida": "p-disfida", "tab-progressi": "p-progressi" };
   function selectTab(tab) {
     tabs.forEach(function (t) {
       var on = t === tab;
@@ -484,6 +504,7 @@ input[type="range"]{accent-color:var(--accent); width:100%}
     });
     if (tab.id === "tab-sim") { sim.visible = true; sim.resize(); }
     else { sim.visible = false; }
+    if (tab.id === "tab-progressi" && typeof renderProgress === "function") renderProgress();
   }
   tabs.forEach(function (t, i) {
     t.addEventListener("click", function () { selectTab(t); });
@@ -901,6 +922,62 @@ input[type="range"]{accent-color:var(--accent); width:100%}
    Le stringhe LaTeX usano "\\(" / "\\)" (a runtime diventano \( \)). */
 
 var AREAS = ["Teoria dei numeri", "Combinatoria e probabilità", "Geometria", "Algebra e logica"];
+
+/* ================= PROGRESSI (statistiche persistenti) ================= */
+var Stats = (function () {
+  var KEY = "olimpiadi_progress_v1";
+  function ymd(d) { return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
+  function blank() { return { area: {}, gare: { count: 0, bestScore: 0, bestTimeMs: 0 }, totAtt: 0, totOk: 0, streak: { count: 0, last: "" }, days: 0 }; }
+  function load() {
+    try {
+      var s = JSON.parse(localStorage.getItem(KEY));
+      if (!s || typeof s !== "object") return blank();
+      s.area = s.area || {}; s.gare = s.gare || { count: 0, bestScore: 0, bestTimeMs: 0 }; s.streak = s.streak || { count: 0, last: "" };
+      if (typeof s.totAtt !== "number") s.totAtt = 0; if (typeof s.totOk !== "number") s.totOk = 0; if (typeof s.days !== "number") s.days = 0;
+      return s;
+    } catch (e) { return blank(); }
+  }
+  function save(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) { } }
+  function touch(s) {
+    var t = ymd(new Date()); if (s.streak.last === t) return;
+    var ys = ymd(new Date(Date.now() - 86400000));
+    s.streak.count = (s.streak.last === ys) ? s.streak.count + 1 : 1;
+    s.streak.last = t; s.days = (s.days || 0) + 1;
+  }
+  return {
+    recordArea: function (area, ok) { var s = load(); if (!s.area[area]) s.area[area] = { ok: 0, tot: 0 }; s.area[area].tot++; if (ok) s.area[area].ok++; s.totAtt++; if (ok) s.totOk++; touch(s); save(s); },
+    recordGara: function (score, total, ms) { var s = load(); s.gare.count++; if (score > s.gare.bestScore) s.gare.bestScore = score; if (ms > 0 && (s.gare.bestTimeMs === 0 || ms < s.gare.bestTimeMs)) s.gare.bestTimeMs = ms; touch(s); save(s); },
+    load: load,
+    reset: function () { save(blank()); }
+  };
+})();
+function fmtProgMs(ms) { if (!ms) return "—"; var t = Math.floor(ms / 1000); return ("0" + Math.floor(t / 60)).slice(-2) + ":" + ("0" + (t % 60)).slice(-2); }
+function renderProgress() {
+  var box = document.getElementById("progress-body"); if (!box) return;
+  var s = Stats.load();
+  var accTot = s.totAtt ? Math.round(100 * s.totOk / s.totAtt) : 0;
+  var tiles = [
+    ["Problemi svolti", s.totAtt],
+    ["Precisione totale", s.totAtt ? accTot + "%" : "—"],
+    ["Gare completate", s.gare.count],
+    ["Miglior punteggio", s.gare.count ? s.gare.bestScore + "/8" : "—"],
+    ["Miglior tempo", fmtProgMs(s.gare.bestTimeMs)],
+    ["Giorni di fila", s.streak.count]
+  ];
+  var html = '<div class="stat-grid">';
+  tiles.forEach(function (t) { html += '<div class="stat"><div class="num">' + t[1] + '</div><div class="lbl">' + t[0] + '</div></div>'; });
+  html += '</div>';
+  html += '<h3 style="margin:1.3rem 0 .5rem">Precisione per area</h3>';
+  if (s.totAtt === 0) {
+    html += '<p style="color:var(--muted)">Ancora nessun tentativo registrato: prova la Pratica, il Quiz o la Gara a squadre e torna qui a vedere i progressi.</p>';
+  } else {
+    AREAS.forEach(function (a) {
+      var d = s.area[a] || { ok: 0, tot: 0 }; var p = d.tot ? Math.round(100 * d.ok / d.tot) : 0;
+      html += '<div class="abar-row"><div class="abar-lbl">' + a + '</div><div class="abar-track"><div class="abar-fill" style="width:' + p + '%"></div></div><div class="abar-val">' + d.ok + '/' + d.tot + ' · ' + p + '%</div></div>';
+    });
+  }
+  box.innerHTML = html;
+}
 
 /* ---------- helpers ---------- */
 function randInt(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
@@ -1806,8 +1883,8 @@ if (typeof module !== "undefined" && module.exports) {
   var PRATICA_SLOTS = (function () { var s = []; for (var r = 0; r < 2; r++) AREAS.forEach(function (a) { s.push(a); }); return s; })();
   function makePraticaCard(area, num) {
     var card = document.createElement("div"); card.className = "card";
-    var st = { shown: 0, prob: null };
-    function fresh() { st.prob = choice(GEN[level][area]).gen(); st.shown = 0; render(); }
+    var st = { shown: 0, prob: null, recorded: false };
+    function fresh() { st.prob = choice(GEN[level][area]).gen(); st.shown = 0; st.recorded = false; render(); }
     function render() {
       var p = st.prob;
       card.innerHTML =
@@ -1831,6 +1908,7 @@ if (typeof module !== "undefined" && module.exports) {
         if (raw === "") { fb.innerHTML = '<div class="fb">Inserisci un numero.</div>'; return; }
         var v = parseFloat(raw);
         var ok = isFinite(v) && Math.abs(v - p.answer) <= 1e-9;
+        if (!st.recorded) { st.recorded = true; try { Stats.recordArea(area, ok); } catch (e) { } }
         fb.innerHTML = ok
           ? '<div class="fb correct">' + ICON_CHECK + ' Esatto!</div>'
           : '<div class="fb incorrect">' + ICON_CROSS + ' Non ci siamo. Prova un suggerimento o rivedi il calcolo.</div>';
@@ -1921,7 +1999,10 @@ if (typeof module !== "undefined" && module.exports) {
   function answer(idx) {
     if (session.answers[session.i] !== null) return;
     session.answers[session.i] = idx;
-    if (idx === session.questions[session.i].correct) session.score++;
+    var q = session.questions[session.i];
+    var ok = idx === q.correct;
+    if (ok) session.score++;
+    try { Stats.recordArea(q.area, ok); } catch (e) { }
     renderQuestion();
   }
 
@@ -2460,7 +2541,7 @@ if (typeof module !== "undefined" && module.exports) {
       if(shown>=hints.length) this.disabled=true;
     });
     card.querySelector('[data-act="sol"]').addEventListener("click",function(){solBox.hidden=!solBox.hidden;});
-    return {card:card, check:check};
+    return {card:card, check:check, area:area};
   }
   // Difficoltà per generatore: 1=base, 2=intermedio, 3=avanzato (default 2)
   var HINTS={"divroot":"I divisori si accoppiano: il più piccolo divisore \\(>\\sqrt{N}\\) è \\(N\\) diviso il più grande divisore \\(\\le\\sqrt{N}\\).","zerifact":"Gli zeri finali di \\(n!\\) contano i fattori \\(5\\) (formula di Legendre): \\(\\lfloor n/5\\rfloor+\\lfloor n/25\\rfloor+\\cdots\\).","mod1000":"Le ultime tre cifre sono il resto modulo \\(1000\\): eleva a potenza riducendo ogni volta \\(\\bmod 1000\\).","sigma":"Per \\(N=\\prod p^{a}\\) la somma dei divisori è \\(\\prod\\dfrac{p^{a+1}-1}{p-1}\\).","coprimi":"Conta con la funzione di Eulero: \\(\\varphi(N)=N\\prod_{p\\mid N}\\left(1-\\dfrac1p\\right)\\).","fermat":"Piccolo teorema di Fermat: \\(a^{p-1}\\equiv1\\pmod p\\) se \\(p\\nmid a\\); riduci l'esponente \\(\\bmod (p-1)\\).","crt":"Teorema cinese del resto: parti dalla prima congruenza (\\(x=9,20,31,\\dots\\)) e imponi la seconda.","legendre":"Formula di Legendre: l'esponente di \\(p\\) in \\(n!\\) è \\(\\lfloor n/p\\rfloor+\\lfloor n/p^{2}\\rfloor+\\cdots\\).","order":"L'ordine di \\(a\\) modulo \\(m\\) divide \\(\\varphi(m)\\): prova i divisori di \\(\\varphi(m)\\).","numdiv":"Per \\(N=\\prod p^{a}\\) il numero di divisori è \\(\\prod (a+1)\\).","eulerth":"Teorema di Eulero: \\(a^{\\varphi(m)}\\equiv1\\pmod m\\) con \\(\\gcd(a,m)=1\\); qui \\(\\varphi(10)=4\\).","aliquot":"Somma tutti i divisori con la formula di \\(\\sigma\\) e sottrai \\(N\\) stesso.","lcm3":"Fattorizza i tre numeri e per ogni primo prendi l'esponente massimo.","lastdigit":"L'ultima cifra di \\(a^{n}\\) è periodica \\(\\bmod 10\\): trova il periodo e riduci \\(n\\).","digitroot":"La radice numerica è \\(1+(N-1)\\bmod 9\\) (il resto \\(\\bmod 9\\), con \\(9\\) al posto di \\(0\\)).","digitsumbase":"Converti \\(N\\) nella base data con divisioni successive e somma i resti.","wilson":"Teorema di Wilson: \\((p-1)!\\equiv-1\\equiv p-1\\pmod p\\).","conglin":"Moltiplica entrambi i membri per l'inverso di \\(a\\) modulo \\(m\\) (esiste perché \\(\\gcd(a,m)=1\\)).","quadres":"Modulo un primo \\(p\\) i residui quadratici non nulli sono \\((p-1)/2\\); con lo \\(0\\) diventano \\((p+1)/2\\).","figurate":"Applica la formula del numero figurato: triangolare \\(\\frac{n(n+1)}2\\), quadrato \\(n^{2}\\), pentagonale \\(\\frac{n(3n-1)}2\\), esagonale \\(n(2n-1)\\).","pisano":"Riduci Fibonacci \\(\\bmod m\\) finché ricompare la coppia iniziale \\(0,1\\): quel passo è il periodo.","stars":"Stelle e sbarre: distribuire \\(n\\) identici fra \\(k\\) è \\(\\binom{n+k-1}{k-1}\\).","paths":"Percorsi minimi su griglia: \\(\\binom{a+b}{a}\\) (scegli quali passi vanno a destra).","derange":"Sono i dismutamenti \\(D_n\\): nessun punto fisso, con \\(D_n=(n-1)(D_{n-1}+D_{n-2})\\).","nim":"Perde chi prende l'ultimo: lascia all'avversario un mucchio \\(\\equiv1\\pmod 6\\).","anagram":"Anagrammi con ripetizioni: \\(\\dfrac{n!}{\\prod(\\text{molteplicità})!}\\).","catalan":"Parentesi bilanciate: numero di Catalan \\(C_n=\\dfrac1{n+1}\\binom{2n}{n}\\).","inclexcl":"Inclusione-esclusione: \\(|A\\cup B|=|A|+|B|-|A\\cap B|\\) (multipli di \\(2\\), di \\(3\\), di \\(6\\)).","fibonacci":"Sottoinsiemi senza due consecutivi di \\(\\{1,\\dots,n\\}\\): sono \\(F_{n+2}\\).","pigeon":"Principio dei cassetti: riempi ogni scatola il più possibile, poi una in più forza il risultato.","binom":"Combinazioni semplici: \\(\\binom{n}{k}\\).","necklace":"Collane con rotazioni: lemma di Burnside, \\(\\dfrac1n\\sum_{d\\mid n}\\varphi(d)\\,c^{\\,n/d}\\).","dicesum":"Conta le coppie ordinate \\((a,b)\\) con somma fissata.","compos":"Composizioni di \\(n\\): sono \\(2^{\\,n-1}\\).","nim2":"Nim a due mucchi (vince chi prende l'ultimo): perdi se i mucchi sono uguali, quindi pareggiali.","stirling2":"Numeri di Stirling di 2ª specie: \\(S(n,k)=k\\,S(n-1,k)+S(n-1,k-1)\\).","partint":"Partizioni di un intero \\(p(n)\\): costruiscile con una ricorrenza sugli addendi massimi.","surj":"Suriezioni per inclusione-esclusione: \\(\\sum_{i}(-1)^{i}\\binom{k}{i}(k-i)^{n}\\).","fixed":"Scegli i \\(k\\) punti fissi \\(\\binom{n}{k}\\) e scombina il resto: \\(\\binom{n}{k}D_{n-k}\\).","probdraw":"Probabilità = casi favorevoli/possibili con le combinazioni: \\(\\binom{b}{2}\\big/\\binom{b+n}{2}\\).","dihedral":"Collane con rotazioni e riflessioni: lemma di Burnside sul gruppo diedrale.","gridavoid":"Totali meno quelli che toccano il punto: \\(\\binom{a+b}{a}-\\binom{\\cdot}{\\cdot}\\binom{\\cdot}{\\cdot}\\).","heron":"Formula di Erone: \\(A=\\sqrt{s(s-a)(s-b)(s-c)}\\) con \\(s=\\frac{a+b+c}2\\).","inradius":"Raggio inscritto: \\(r=\\dfrac{A}{s}\\); nel triangolo rettangolo \\(r=\\dfrac{a+b-c}2\\).","pick":"Teorema di Pick: \\(A=I+\\frac B2-1\\Rightarrow I=A-\\frac B2+1\\).","excircle":"Usa le lunghezze delle tangenti \\(s-a,\\,s-b,\\,s-c\\); per l'excerchio i punti di contatto si scambiano.","spacediag":"Diagonale del parallelepipedo: \\(\\sqrt{a^{2}+b^{2}+c^{2}}\\).","polyangle":"Angolo interno di un \\(n\\)-agono regolare: \\(\\dfrac{(n-2)\\cdot180^{\\circ}}{n}\\).","median":"Teorema della mediana: \\(m_a^{2}=\\dfrac{2b^{2}+2c^{2}-a^{2}}4\\).","power":"Potenza di un punto (corde): \\(PA\\cdot PB=PC\\cdot PD\\).","distsides":"Le altezze sono inversamente proporzionali ai lati: \\(a:b:c=\\frac1{h_a}:\\frac1{h_b}:\\frac1{h_c}\\).","quadarea":"Area con la formula di Gauss (shoelace): \\(\\frac12\\left|\\sum (x_iy_{i+1}-x_{i+1}y_i)\\right|\\).","chord":"Corda, raggio e distanza dal centro: metà corda \\(=\\sqrt{r^{2}-d^{2}}\\).","diagonals":"Diagonali di un \\(n\\)-agono: \\(\\dfrac{n(n-3)}2\\).","vanschooten":"Teorema di Tolomeo: sul triangolo equilatero \\(PA=PB+PC\\).","stewart":"Teorema di Stewart: \\(b^{2}m+c^{2}n=a(d^{2}+mn)\\) con \\(m+n=a\\).","circumR":"Nel triangolo rettangolo l'ipotenusa è un diametro: \\(R=\\dfrac{\\text{ipotenusa}}2\\).","bisector":"Teorema della bisettrice: \\(\\dfrac{BD}{DC}=\\dfrac{AB}{AC}\\) con \\(BD+DC=BC\\).","solid":"Ricorda le formule dei solidi: sfera \\(S=4\\pi r^{2}\\), cilindro \\(V=\\pi r^{2}h\\), cono \\(V=\\frac13\\pi r^{2}h\\).","rhombus":"Area del rombo: semiprodotto delle diagonali \\(\\dfrac{d_1 d_2}2\\).","trapezoid":"Area del trapezio: \\(\\dfrac{(B+b)\\,h}2\\).","pointline":"Distanza punto-retta: \\(\\dfrac{|ax_0+by_0+c|}{\\sqrt{a^{2}+b^{2}}}\\).","boxsurf":"Superficie del parallelepipedo: \\(2(ab+bc+ca)\\).","prismtri":"Volume del prisma: area di base \\(\\times\\) altezza.","pyramid":"Volume della piramide: \\(\\frac13\\times\\) area di base \\(\\times\\) altezza.","conelat":"Superficie laterale del cono: \\(\\pi r\\ell\\) con apotema \\(\\ell=\\sqrt{r^{2}+h^{2}}\\).","conetot":"Superficie totale del cono: \\(\\pi r\\ell+\\pi r^{2}\\), \\(\\ell=\\sqrt{r^{2}+h^{2}}\\).","cyltot":"Superficie totale del cilindro: \\(2\\pi r(r+h)\\).","spherevol":"Volume della sfera: \\(\\dfrac43\\pi r^{3}\\).","frustum":"Volume del tronco di cono: \\(\\dfrac{\\pi h}{3}(R^{2}+Rr+r^{2})\\).","eulerpoly":"Relazione di Eulero per i poliedri: \\(V-S+F=2\\).","viete":"Formule di Viète: \\(r_1+r_2=-\\frac ba\\), \\(r_1r_2=\\frac ca\\); poi \\(r_1^{2}+r_2^{2}=(r_1+r_2)^{2}-2r_1r_2\\).","polydiv":"\\(P(8)-P(1)\\) è divisibile per \\(7\\): conta i \\(k\\) di tre cifre con \\(k\\equiv5\\pmod 7\\).","xinv":"Da \\(x+\\frac1x=s\\) segue \\(x^{3}+\\frac1{x^{3}}=s^{3}-3s\\).","sumsq":"Somma dei primi \\(n\\) quadrati: \\(\\dfrac{n(n+1)(2n+1)}6\\).","geomser":"Serie geometrica: \\(1+r+\\cdots+r^{n}=\\dfrac{r^{\\,n+1}-1}{r-1}\\).","vietecubi":"Con Viète: \\(r_1^{3}+r_2^{3}=(r_1+r_2)^{3}-3r_1r_2(r_1+r_2)\\).","recur":"Applica la ricorrenza passo per passo, oppure usa il punto fisso di \\(a_{n+1}=2a_n+4\\).","sumcubes":"Somma dei primi \\(n\\) cubi: \\(\\left(\\dfrac{n(n+1)}2\\right)^{2}\\).","diffsquares":"\\(x^{2}-y^{2}=(x-y)(x+y)\\): conta le fattorizzazioni con i due fattori della stessa parità.","arithser":"Somma della progressione aritmetica: \\(\\dfrac{n\\,(2a_1+(n-1)d)}2\\).","remthm":"Teorema del resto: il resto di \\(P(x)\\) diviso \\(x-c\\) è \\(P(c)\\).","newton":"Binomio di Newton: il coefficiente di \\(x^{k}\\) in \\((x+a)^{n}\\) è \\(\\binom{n}{k}a^{\\,n-k}\\).","telescope":"Telescopica: \\(\\dfrac1{k(k+1)}=\\dfrac1k-\\dfrac1{k+1}\\).","cramer":"Regola di Cramer (o combina le equazioni) per ricavare \\(x\\) e \\(y\\).","logint":"\\(\\log_b N=k\\) significa \\(b^{k}=N\\): scrivi \\(N\\) come potenza di \\(b\\).","geomterm":"Termine di una progressione geometrica: \\(a_n=a_1\\,r^{\\,n-1}\\).","means":"La somma dei numeri è media \\(\\times\\) quantità; togli i valori noti.","ratroot":"Cerca le radici razionali fra i divisori del termine noto (teorema delle radici razionali).","floorsum":"\\(\\lfloor\\sqrt k\\rfloor=m\\) per \\(m^{2}\\le k<(m+1)^{2}\\): raggruppa a blocchi.","fibid":"Identità: \\(F_1+\\cdots+F_n=F_{n+2}-1\\)."};
@@ -2501,10 +2582,12 @@ if (typeof module !== "undefined" && module.exports) {
   }
   function checkAllDisf(){
     if(!disfCards.length) return;
-    var ok=0; disfCards.forEach(function(mc){ if(mc.check(true)) ok++; });
+    var ok=0; disfCards.forEach(function(mc){ var r=mc.check(true); if(r) ok++; try{ Stats.recordArea(mc.area, r); }catch(e){} });
     disfStopTimer();
+    var ms=disfStart?(Date.now()-disfStart):0;
+    try{ Stats.recordGara(ok, disfCards.length, ms); }catch(e){}
     var sc=document.getElementById("disfida-score");
-    if(sc) sc.textContent="Punteggio "+ok+"/"+disfCards.length+(disfStart?(" · tempo "+disfFmt(Date.now()-disfStart)):"");
+    if(sc) sc.textContent="Punteggio "+ok+"/"+disfCards.length+(disfStart?(" · tempo "+disfFmt(ms)):"");
     typeset(document.getElementById("disfida-list"));
   }
 
@@ -2522,6 +2605,9 @@ if (typeof module !== "undefined" && module.exports) {
     buildDisfida(false);
   }); }); }
   buildDisfida(false);
+  var _pr=document.getElementById("progress-reset");
+  if(_pr) _pr.addEventListener("click", function(){ if(window.confirm("Vuoi azzerare tutti i progressi salvati su questo dispositivo?")){ Stats.reset(); renderProgress(); } });
+  renderProgress();
   renderLevelSelectors();
   buildTeoria();
   buildPratica();
