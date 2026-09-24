@@ -203,6 +203,7 @@ input[type="range"]{accent-color:var(--accent); width:100%}
   .abar-fill{height:100%;background:var(--accent);border-radius:999px}
   .abar-val{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.82rem;color:var(--muted);white-space:nowrap}
   .arch-ans{color:var(--muted);align-self:center;font-size:.9rem}
+  .cese-clabel{font-weight:600;font-size:.92rem;align-self:center;color:var(--heading)}
   @media(max-width:520px){.abar-row{grid-template-columns:1fr auto;grid-template-areas:"lbl val" "track track"}.abar-lbl{grid-area:lbl}.abar-val{grid-area:val;text-align:right}.abar-track{grid-area:track}}
 </style>
 </head>
@@ -230,6 +231,7 @@ input[type="range"]{accent-color:var(--accent); width:100%}
     <button class="tab" role="tab" id="tab-disfida" aria-controls="p-disfida" aria-selected="false" tabindex="-1">Gara a squadre</button>
     <button class="tab" role="tab" id="tab-progressi" aria-controls="p-progressi" aria-selected="false" tabindex="-1">Progressi</button>
     <button class="tab" role="tab" id="tab-archivio" aria-controls="p-archivio" aria-selected="false" tabindex="-1">Archivio Disfida</button>
+    <button class="tab" role="tab" id="tab-cesenatico" aria-controls="p-cesenatico" aria-selected="false" tabindex="-1">Cesenatico</button>
   </div>
 
   <!-- ================= TEORIA ================= -->
@@ -446,6 +448,15 @@ input[type="range"]{accent-color:var(--accent); width:100%}
     <div id="archive-list"></div>
   </section>
 
+  <section class="panel" id="p-cesenatico" role="tabpanel" aria-labelledby="tab-cesenatico" tabindex="0">
+    <div class="card">
+      <h2 style="margin-top:0">Cesenatico — finale nazionale</h2>
+      <p style="color:var(--muted);font-size:.92rem;margin-top:.2rem">I problemi della finale delle Olimpiadi Italiane di Matematica, con indizi graduati e dimostrazione completa (soluzioni ufficiali). Alcuni problemi hanno una risposta numerica che puoi verificare; la maggior parte è di tipo dimostrativo.</p>
+      <div class="seg" role="group" aria-label="Anno" id="cese-anni" style="margin-top:.6rem"><span class="seg-label">Anno</span></div>
+    </div>
+    <div id="cese-list"></div>
+  </section>
+
   <p class="foot">Olimpiadi di Matematica · <span class="mono">olimpiadi.ventilii.ai</span></p>
 </main>
 
@@ -505,7 +516,7 @@ input[type="range"]{accent-color:var(--accent); width:100%}
 
   /* ---------- Tabs ---------- */
   var tabs = Array.prototype.slice.call(document.querySelectorAll('.tabs .tab'));
-  var panels = { "tab-teoria": "p-teoria", "tab-sim": "p-sim", "tab-pratica": "p-pratica", "tab-quiz": "p-quiz", "tab-disfida": "p-disfida", "tab-progressi": "p-progressi", "tab-archivio": "p-archivio" };
+  var panels = { "tab-teoria": "p-teoria", "tab-sim": "p-sim", "tab-pratica": "p-pratica", "tab-quiz": "p-quiz", "tab-disfida": "p-disfida", "tab-progressi": "p-progressi", "tab-archivio": "p-archivio", "tab-cesenatico": "p-cesenatico" };
   function selectTab(tab) {
     tabs.forEach(function (t) {
       var on = t === tab;
@@ -517,6 +528,7 @@ input[type="range"]{accent-color:var(--accent); width:100%}
     else { sim.visible = false; }
     if (tab.id === "tab-progressi" && typeof renderProgress === "function") renderProgress();
     if (tab.id === "tab-archivio" && typeof initArchive === "function") initArchive();
+    if (tab.id === "tab-cesenatico" && typeof initCese === "function") initCese();
   }
   tabs.forEach(function (t, i) {
     t.addEventListener("click", function () { selectTab(t); });
@@ -1055,6 +1067,81 @@ function initArchive() {
     bar.appendChild(btn);
   });
   renderArchive();
+}
+
+/* ================= CESENATICO (finale nazionale) ================= */
+var CESE={"2025":[{"n":1,"tag":"Teoria dei numeri","text":"Per ogni intero positivo \\(n\\) indichiamo con \\(s(n)\\) la somma delle cifre di \\(n\\) in base \\(10\\) (ad esempio \\(s(7)=7\\) e \\(s(10654)=16\\)).<br>(a) Determinare il più piccolo intero positivo \\(n\\) tale che \\(n=225\\cdot s(n)\\).<br>(b) Determinare il più piccolo intero positivo \\(n\\) tale che \\(n=225\\cdot s(n)^2\\).","checks":[{"q":"(a) il più piccolo \\(n\\)","a":2025},{"q":"(b) il più piccolo \\(n\\)","a":72900}],"hints":["Da \\(225\\mid n\\) segue \\(9\\mid n\\); ma per un multiplo di \\(9\\) anche la somma delle cifre è multipla di \\(9\\), quindi \\(9\\mid s(n)\\).","(a) Allora \\(225\\cdot 9=2025\\) divide \\(n\\): prova il più piccolo candidato. (b) Nota che \\(225\\,s(n)^2=(15\\,s(n))^2\\) è un quadrato; con \\(s(n)\\) multiplo di \\(9\\) prova \\(s(n)=9\\), poi \\(s(n)=18\\)."],"sol":"<p><b>(a) Risposta: \\(2025\\).</b> Dall'equazione \\(n=225\\,s(n)\\) segue che \\(n\\) è multiplo di \\(225\\), in particolare di \\(9\\); ma la somma delle cifre di un multiplo di \\(9\\) è a sua volta multipla di \\(9\\), quindi \\(9\\mid s(n)\\). Perciò \\(n=225\\,s(n)\\) è multiplo di \\(225\\cdot 9=2025\\). Poiché \\(s(2025)=2+0+2+5=9\\) e \\(225\\cdot 9=2025\\), il numero \\(2025\\) verifica: è dunque il minimo.</p><p><b>(b) Risposta: \\(72\\,900\\).</b> Come prima \\(9\\mid s(n)\\). Con \\(s(n)=9\\) si avrebbe \\(n=225\\cdot 81=18\\,225\\), ma \\(s(18225)=18\\ne 9\\): non va bene. Il valore successivo è \\(s(n)=18\\), da cui \\(n=225\\cdot 18^2=225\\cdot 324=72\\,900\\); e \\(s(72900)=7+2+9+0+0=18\\), quindi verifica. È il minimo.</p><p><b>Osservazione.</b> In entrambi i casi la soluzione è unica: scrivendo \\(n=225\\,s(n)^2=(15\\,s(n))^2\\) ogni soluzione è un quadrato \\((15h)^2\\) con \\(9\\mid h\\), e una stima mostra che \\(n\\) supera il membro destro da un certo punto in poi, lasciando solo casi finiti da controllare.</p>"},{"n":2,"tag":"Algebra","text":"Determinare per quali valori interi di \\(a\\) l'insieme degli interi \\(x\\) che soddisfano la disuguaglianza \\(10x^2+a\\le 33x\\) è costituito da esattamente un elemento.","checks":[{"q":"Quanti valori interi di \\(a\\)?","a":3}],"hints":["Porta tutto da una parte e isola \\(a\\): \\(a\\le x(33-10x)\\). Il secondo membro \\(p(x)=x(33-10x)\\) è \\(\\le 0\\) per \\(x\\le 0\\) e per \\(x\\ge 4\\).","Bastano quindi \\(x=1,2,3\\): calcola \\(p(1),p(2),p(3)\\) e cerca gli \\(a\\) per cui la disuguaglianza \\(a\\le p(x)\\) è soddisfatta da un solo intero.","In alternativa studia \\(10x^2-33x+a\\le 0\\): l'intervallo delle soluzioni è centrato in \\(33/20\\); imponi che contenga un solo intero tramite il discriminante \\(\\Delta=1089-40a\\)."],"sol":"<p><b>Risposta: \\(a\\in\\{24,25,26\\}\\).</b></p><p>Riscriviamo la disuguaglianza come \\(p(x)=x(33-10x)\\ge a\\). Il polinomio \\(p(x)\\) è \\(\\le 0\\) per \\(x\\le 0\\) e per \\(x\\ge 4\\), quindi i soli valori interi interessanti sono \\(p(1)=23\\), \\(p(2)=26\\), \\(p(3)=9\\). Perciò:</p><ul><li>se \\(a\\ge 27\\) non ci sono soluzioni intere;</li><li>se \\(a\\le 23\\) ci sono almeno due soluzioni (\\(x=1\\) e \\(x=2\\));</li><li>per \\(a=24,25,26\\) l'unica soluzione intera è \\(x=2\\).</li></ul><p><b>Soluzione alternativa.</b> Da \\(10x^2-33x+a\\le 0\\), se \\(\\Delta=1089-40a\\ge 0\\) le soluzioni reali sono i numeri tra le radici \\(\\dfrac{33\\pm\\sqrt\\Delta}{20}\\), un intervallo centrato in \\(33/20=1{,}65\\). L'intero più vicino al centro è \\(x=2\\) (vi appartiene sse \\(\\sqrt\\Delta\\ge 7\\)), il secondo è \\(x=1\\) (se \\(\\sqrt\\Delta\\ge 13\\)). C'è un solo intero se e solo se \\(7\\le\\sqrt\\Delta<13\\), cioè \\(49\\le 1089-40a\\lt 169\\), da cui \\(23\\lt a\\le 26\\), ossia \\(a\\in\\{24,25,26\\}\\).</p>"},{"n":3,"tag":"Teoria dei numeri","text":"Dato un intero positivo \\(n\\), sia \\(p(n)\\) il numero di primi distinti che dividono \\(n\\) (ad esempio \\(p(12)=2\\), \\(p(120)=3\\)). Un intero è <i>bilanciato</i> se \\(p(n)\\) è pari, <i>sbilanciato</i> se \\(p(n)\\) è dispari. Dimostrare che esistono infinite coppie di interi positivi consecutivi che sono entrambi bilanciati oppure entrambi sbilanciati.","checks":[],"hints":["Per assurdo: se le coppie 'buone' (consecutivi con \\(p\\) di ugual parità) fossero finite, da un certo punto in poi bilanciati e sbilanciati si alternerebbero, cioè la parità di \\(p\\) dipenderebbe solo dalla parità di \\(n\\).","Cerca allora due famiglie infinite di numeri sbilanciati, una fatta di pari e una di dispari, per contraddire l'alternanza.","Le potenze di \\(2\\) e le potenze di \\(3\\) hanno un solo fattore primo (\\(p=1\\), dispari): sono tutte sbilanciate, ma le prime sono pari e le seconde dispari."],"sol":"<p><b>Dimostrazione (per assurdo).</b> Supponiamo che esistano solo finitamente molte coppie di consecutivi con \\(p\\) della stessa parità. Allora da un certo punto in poi gli interi sarebbero alternativamente bilanciati e sbilanciati, cioè si avrebbe una delle due situazioni: (i) definitivamente tutti i pari bilanciati e tutti i dispari sbilanciati, oppure (ii) definitivamente tutti i pari sbilanciati e tutti i dispari bilanciati.</p><p>Ma tutte le potenze di \\(2\\) e tutte le potenze di \\(3\\) hanno un unico fattore primo, quindi \\(p=1\\) è dispari e sono <i>sbilanciate</i>. Le potenze di \\(2\\) sono pari e le potenze di \\(3\\) sono dispari: nessuna delle due alternanze (i)/(ii) può reggere, perché ciascuna imporrebbe una parità fissa agli sbilanciati. Assurdo. Dunque le coppie buone sono infinite. \\(\\blacksquare\\)</p><p><b>Soluzione alternativa (costruttiva).</b> Detta <i>bella</i> una coppia \\((n,n+1)\\) con \\(p(n),p(n+1)\\) della stessa parità, partiamo da una bella coppia \\((n,n+1)\\): uno dei due è pari e l'altro dispari. Moltiplicando per \\(2\\): se \\(n\\) è pari, \\(p(2n)=p(n)\\) e \\(p(2(n+1))=p(n+1)+1\\) (si aggiunge il fattore \\(2\\) al dispari); se \\(n\\) è dispari, viceversa. In ogni caso \\(p(2n)\\) e \\(p(2(n+1))\\) hanno parità opposta, quindi una tra \\((2n,2n+1)\\) e \\((2n+1,2n+2)\\) è bella. Poiché \\(2n\\gt n+1\\) per \\(n\\gt 1\\), da ogni bella coppia se ne ottiene una più grande: partendo da \\((2,3)\\) se ne costruiscono infinite. \\(\\blacksquare\\)</p>"},{"n":4,"tag":"Combinatoria","text":"Un insieme \\(S\\) si dice <i>annoso</i> se è costituito da \\(2025\\) numeri reali positivi distinti. Per ogni insieme annoso \\(S\\), sia \\(d(S)\\) il numero di potenze di \\(2\\), con esponenti interi positivi distinti, che si possono scrivere come somma di due elementi distinti di \\(S\\). Determinare il massimo di \\(d(S)\\).","checks":[{"q":"Massimo di \\(d(S)\\)","a":2024}],"hints":["Per la stima dal basso cerca un insieme in cui ogni potenza di \\(2\\) si ottiene sommando \\(1\\) a un altro elemento: prova \\(S=\\{1,\\,2^2-1,\\,2^3-1,\\dots,2^{2025}-1\\}\\).","Per la stima dall'alto dimostra, per induzione su \\(n\\), che \\(n\\) reali positivi producono al più \\(n-1\\) potenze di \\(2\\) distinte come somme di coppie.","Nel passo induttivo prendi le \\(n\\) potenze più piccole: o resta un elemento inutilizzato (usi l'ipotesi induttiva), o una nuova potenza supererebbe la somma di tutte le precedenti, quindi di tutti gli elementi — impossibile."],"sol":"<p><b>Risposta: \\(2024\\).</b></p><p><b>Stima dal basso.</b> Sia \\(S=\\{1,\\ 2^2-1,\\ 2^3-1,\\ \\dots,\\ 2^{2025}-1\\}\\): sono \\(2025\\) reali positivi distinti. Per ogni \\(k\\) da \\(2\\) a \\(2025\\) si ha \\(2^k=1+(2^k-1)\\), quindi si ottengono le \\(2024\\) potenze \\(2^2,\\dots,2^{2025}\\). Dunque \\(d(S)\\ge 2024\\).</p><p><b>Stima dall'alto.</b> Dimostriamo per induzione che, dato un insieme di \\(n\\) reali positivi, non si possono ottenere \\(n\\) potenze di \\(2\\) come somme di coppie (quindi al più \\(n-1\\)). Per \\(n=2\\) c'è una sola coppia, quindi al più una potenza. Passo induttivo: sia \\(S\\) con \\(n+1\\) elementi e supponiamo per assurdo di ottenere \\(n+1\\) potenze distinte; consideriamo le \\(n\\) con esponente minore. O esiste un elemento mai usato in queste \\(n\\) coppie — e allora \\(n\\) potenze verrebbero da \\(n\\) elementi, contro l'ipotesi induttiva — oppure tutti gli elementi sono usati: ma allora la \\((n+1)\\)-esima potenza (la più grande) supererebbe la somma di tutte le precedenti, dunque la somma di tutti gli elementi, e a maggior ragione qualunque somma di due di essi: impossibile. Quindi \\(d(S)\\le 2024\\).</p><p>Combinando le due stime, il massimo è \\(\\boxed{2024}\\). \\(\\blacksquare\\)</p>"},{"n":5,"tag":"Geometria","text":"Sia \\(ABC\\) un triangolo e sia \\(D\\) il piede della bisettrice uscente da \\(A\\). L'asse del segmento \\(AD\\) interseca la circonferenza circoscritta ad \\(ABC\\) in \\(E\\) ed \\(F\\), con \\(E\\) e \\(B\\) da parti opposte rispetto alla retta \\(AD\\). Sia \\(G\\) l'intersezione tra \\(BE\\) e \\(DF\\), e \\(H\\) l'intersezione tra \\(CF\\) e \\(DE\\). Dimostrare che le rette \\(GH\\) e \\(BC\\) sono parallele.","checks":[],"hints":["Siano \\(M\\) il punto medio di \\(AD\\) e \\(K,K'\\) le intersezioni di \\(EF\\) con \\(AC\\) e \\(AB\\). Poiché \\(EF\\) è l'asse di \\(AD\\), gli angoli in \\(E\\) e \\(F\\) 'si riflettono' su \\(AD\\).","Mostra che i quadrilateri \\(EKHC\\) e \\(FK'GB\\) sono ciclici usando angoli sullo stesso arco della circoscritta.","Deduci che anche \\(GHEF\\) è ciclico; poi \\(\\angle FCB=\\angle FEB=\\angle FHG\\) dà \\(GH\\parallel BC\\)."],"sol":"<p><b>Dimostrazione.</b> Sia \\(M\\) il punto medio della bisettrice \\(AD\\), sia \\(K=AC\\cap EF\\) e \\(K'=AB\\cap EF\\). Ricordiamo che \\(EF\\) è l'asse di \\(AD\\), quindi la retta \\(AD\\) è riflessa in sé e \\(\\angle DEM=\\angle AEM\\), \\(\\angle DFM=\\angle AFM\\).</p><p><b>1) \\(EKHC\\) e \\(FK'GB\\) sono ciclici.</b> Essendo \\(ME\\) asse di \\(AD\\), \\(\\angle DEM=\\angle AEM\\); inoltre \\(\\angle AEF=\\angle ACF\\) perché insistono sullo stesso arco \\(AF\\) della circoscritta. Per transitività \\(\\angle HEK=\\angle DEM=\\angle HCK\\), dunque \\(EKHC\\) è ciclico. In modo analogo lo è \\(FK'GB\\).</p><p><b>2) \\(GHEF\\) è ciclico.</b> Basta \\(\\angle EGF=\\angle EHF\\), cioè \\(\\angle FGB=\\angle CHE\\). Ora \\(\\angle FGB=\\angle FK'B\\) (ciclicità di \\(FK'GB\\)) \\(=\\angle AK'M\\) (opposti al vertice); analogamente \\(\\angle CHE=\\angle CKE=\\angle MKA\\). Ma il triangolo \\(AK'K\\) è isoscele sulla base \\(KK'\\) (perché \\(AM\\) è insieme altezza e bisettrice), quindi \\(\\angle AK'M=\\angle MKA\\): la ciclicità segue.</p><p><b>3) \\(GH\\parallel BC\\).</b> Basta \\(\\angle FCB=\\angle FHG\\). D'altra parte \\(\\angle FCB=\\angle FEB\\) (stesso arco \\(FB\\)), e \\(\\angle FEB=\\angle FEG=\\angle FHG\\) per la ciclicità di \\(GHEF\\). Per transitività \\(\\angle FCB=\\angle FHG\\), dunque \\(GH\\parallel BC\\). \\(\\blacksquare\\)</p><p style=\"color:var(--muted)\">Nota: la soluzione ufficiale propone anche due dimostrazioni alternative, una mostrando che \\(D\\) è l'ortocentro di \\(EFN\\) (con \\(N\\) seconda intersezione di \\(AD\\) con la circoscritta), l'altra usando il simmetrico di \\(F\\) rispetto a \\(M\\); entrambe concludono dalla ciclicità di \\(GHEF\\) come sopra.</p>"},{"n":6,"tag":"Combinatoria e giochi","text":"Siano \\(\\alpha\\) e \\(\\beta\\) angoli di ampiezza positiva e minore di \\(90^\\circ\\). Una «formica alfabetaria» avanza in linea retta; non può essere spostata, ma solo ruotata (restando ferma nel punto) verso una direzione a nostra scelta. Quando la fermiamo per ruotarla, essa può mantenere la direzione imposta, oppure girare di \\(\\alpha\\) in senso orario, o di \\(\\beta\\) in senso antiorario, poi riparte. Se ripassa per un punto in cui era già stata ruotata, si ferma per sempre. Dimostrare che per ogni \\(\\alpha,\\beta\\) ammissibili è sempre possibile fermarla con un numero finito di rotazioni.","checks":[],"hints":["Prendi una circonferenza che contiene la posizione iniziale e, in senso antiorario, tre punti \\(A,X,B\\) tali che l'arco \\(XA\\) sottenda un angolo \\(\\alpha\\) e l'arco \\(XB\\) un angolo \\(\\beta\\) (angoli alla circonferenza).","Se la formica è su un punto dell'arco \\(AB\\) che non contiene \\(X\\) e la punti verso \\(X\\), qualunque cosa scelga finisce in \\(X\\), \\(A\\) o \\(B\\): la terna 'sistema' quell'arco.","Ruotando la configurazione copri tutta la circonferenza con \\(n\\) terne (\\(3n\\) punti): da qualunque punto la formica finisce sempre in uno di essi, e dopo al più \\(3n+1\\) rotazioni uno si ripete."],"sol":"<p><b>Dimostrazione (costruzione).</b> Consideriamo una circonferenza \\(\\Gamma\\) che contiene al suo interno la posizione iniziale della formica. Su \\(\\Gamma\\) fissiamo, in senso antiorario, tre punti \\(A,X,B\\) tali che il minore arco \\(XA\\) sottenda un angolo alla circonferenza pari ad \\(\\alpha\\) e il minore arco \\(XB\\) sottenda un angolo pari a \\(\\beta\\).</p><p>Se la formica si trova in un punto \\(P\\) dell'arco \\(AB\\) che non contiene \\(X\\) e la orientiamo verso \\(X\\), per l'angolo alla circonferenza essa raggiungerà \\(X\\) (se mantiene la direzione), oppure \\(A\\) (se gira di \\(\\alpha\\)), oppure \\(B\\) (se gira di \\(\\beta\\)). Diciamo allora che la terna \\(X,A,B\\) <i>sistema</i> l'arco \\(AB\\) non contenente \\(X\\).</p><p>Ruotando questa configurazione attorno al centro possiamo ricoprire l'intera circonferenza con un numero finito di archi sistemati: otteniamo punti \\(A_1,\\dots,A_n,\\ X_1,\\dots,X_n,\\ B_1,\\dots,B_n\\) tali che, da qualunque punto di \\(\\Gamma\\), possiamo orientare la formica in modo che — qualunque cosa decida — finisca in \\(A_i\\), \\(X_i\\) o \\(B_i\\) per qualche \\(i\\).</p><p>Questi punti sono \\(3n\\): facendo sempre puntare la formica verso uno di essi, dopo al più \\(3n+1\\) rotazioni almeno uno viene visitato due volte, e la formica si ferma. \\(\\blacksquare\\)</p><p style=\"color:var(--muted)\">Osservazione: il numero di punti cresce quando \\(\\alpha,\\beta\\to 90^\\circ\\). Se invece almeno uno tra \\(\\alpha,\\beta\\) fosse tra \\(90^\\circ\\) e \\(180^\\circ\\), la formica potrebbe sempre tenere una componente positiva lungo un asse fisso e non tornerebbe mai sui suoi passi. Per valori speciali (es. \\(\\alpha=\\beta=45^\\circ\\) col quadrato, oppure \\(\\alpha,\\beta\\in\\{30^\\circ,60^\\circ\\}\\) con l'esagono) bastano i vertici di un poligono regolare.</p>"}]};
+var CESE_YEARS = (typeof CESE !== "undefined") ? Object.keys(CESE).sort() : [];
+var ceseYear = CESE_YEARS.length ? CESE_YEARS[CESE_YEARS.length - 1] : "2025", ceseInit = false;
+function renderCese() {
+  var box = document.getElementById("cese-list"); if (!box || typeof CESE === "undefined") return;
+  var probs = CESE[ceseYear] || [];
+  var html = "";
+  probs.forEach(function (p) {
+    var hasH = p.hints && p.hints.length, checks = p.checks || [];
+    var cr = "";
+    checks.forEach(function (c, ci) {
+      cr += '<div class="answer-row" data-check="' + ci + '">' +
+        '<span class="cese-clabel">' + c.q + ':</span>' +
+        '<input type="number" step="any" inputmode="decimal" aria-label="La tua risposta">' +
+        '<button class="btn btn-primary" data-act="check" type="button">Verifica</button>' +
+        '<span data-fb></span></div>';
+    });
+    html += '<div class="card">' +
+      '<span class="area-tag">' + (p.tag || ("Problema " + p.n)) + '</span>' +
+      '<p style="font-size:1.05rem;margin:.5rem 0"><strong>Problema ' + p.n + '.</strong> ' + p.text + '</p>' +
+      cr +
+      '<div class="answer-row">' +
+        (hasH ? '<button class="btn btn-ghost" data-act="hint" type="button">' + ICON_BULB + ' Suggerimento</button>' : '') +
+        '<button class="btn btn-ghost" data-act="sol" type="button">' + ICON_EYE + ' Mostra dimostrazione</button>' +
+      '</div>' +
+      '<div data-hints></div>' +
+      '<div class="solution" data-sol hidden>' + p.sol + '</div>' +
+      '</div>';
+  });
+  box.innerHTML = html;
+  var cards = box.querySelectorAll('.card');
+  probs.forEach(function (p, idx) {
+    var card = cards[idx]; if (!card) return;
+    var checks = p.checks || [];
+    Array.prototype.forEach.call(card.querySelectorAll('[data-check]'), function (row) {
+      var ci = +row.getAttribute('data-check'), input = row.querySelector('input'), fb = row.querySelector('[data-fb]');
+      function check() {
+        var raw = input.value.trim().replace(",", ".");
+        if (raw === "") { fb.innerHTML = '<span class="fb">—</span>'; return; }
+        var v = parseFloat(raw), target = Number(String(checks[ci].a).replace(",", "."));
+        var ok = isFinite(v) && isFinite(target) && Math.abs(v - target) <= 1e-9;
+        fb.innerHTML = ok ? '<span class="fb correct">' + ICON_CHECK + ' Esatto!</span>'
+                          : '<span class="fb incorrect">' + ICON_CROSS + ' Riprova</span>';
+        typeset(fb);
+      }
+      row.querySelector('[data-act="check"]').addEventListener('click', check);
+      input.addEventListener('keydown', function (e) { if (e.key === 'Enter') check(); });
+    });
+    var hints = (p.hints && p.hints.length) ? p.hints : [], shown = 0;
+    var hintsBox = card.querySelector('[data-hints]'), sol = card.querySelector('[data-sol]');
+    var hb = card.querySelector('[data-act="hint"]');
+    if (hb) hb.addEventListener('click', function () {
+      if (shown >= hints.length) return;
+      var d = document.createElement('div'); d.className = 'hint';
+      d.innerHTML = (hints.length > 1 ? '<strong>Suggerimento ' + (shown + 1) + '.</strong> ' : '<strong>Suggerimento.</strong> ') + hints[shown];
+      hintsBox.appendChild(d); typeset(d); shown++;
+      if (shown >= hints.length) this.disabled = true;
+    });
+    card.querySelector('[data-act="sol"]').addEventListener('click', function () { sol.hidden = !sol.hidden; });
+  });
+  typeset(box);
+}
+function initCese() {
+  if (ceseInit) return; ceseInit = true;
+  var bar = document.getElementById("cese-anni"); if (!bar) return;
+  CESE_YEARS.forEach(function (y) {
+    var btn = document.createElement("button"); btn.className = "tab"; btn.type = "button"; btn.setAttribute("data-year", y);
+    btn.setAttribute("aria-selected", y === ceseYear ? "true" : "false"); btn.textContent = y;
+    btn.addEventListener("click", function () { ceseYear = y; Array.prototype.forEach.call(bar.querySelectorAll("[data-year]"), function (x) { x.setAttribute("aria-selected", x === btn ? "true" : "false"); }); renderCese(); });
+    bar.appendChild(btn);
+  });
+  renderCese();
 }
 
 /* ---------- helpers ---------- */
